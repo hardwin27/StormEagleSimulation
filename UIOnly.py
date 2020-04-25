@@ -84,27 +84,92 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.lbl_Storm.setObjectName("lbl_Storm")
         
         self.lbl_MainScreen = QtWidgets.QLabel(self.centralwidget)
-        self.lbl_MainScreen.setGeometry(QtCore.QRect(30, 20, 671, 421))
+        self.lbl_MainScreen.setGeometry(QtCore.QRect(30, 20, 670, 420))
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lbl_MainScreen.sizePolicy().hasHeightForWidth())
         self.lbl_MainScreen.setSizePolicy(sizePolicy)
         self.lbl_MainScreen.setText("")
-        # self.lbl_MainScreen.setPixmap(QtGui.QPixmap("../../../../Users/OWNER/Pictures/Saved Pictures/pikachu.png"))
         self.lbl_MainScreen.setScaledContents(True)
         self.lbl_MainScreen.setObjectName("lbl_MainScreen")
 
-        self.canvas = QtGui.QPixmap(671, 421)
-        self.lbl_MainScreen.setPixmap(self.canvas)
-        self.painter = QtGui.QPainter(self.lbl_MainScreen.pixmap())
-        self.testPic = StormEagle()
-        self.painter.drawPixmap(200, 200, self.testPic.spritesheet, self.testPic.sprite[14].xPos, self.testPic.sprite[14].yPos, self.testPic.spriteWidth, self.testPic.spriteHeight)
-        
+        backgroundPixmap = QtGui.QPixmap("Resource/BG4.jpeg")
+        backgroundCanvas = QtGui.QPixmap(670, 420)
+        painter = QtGui.QPainter(backgroundCanvas)
+        painter.drawPixmap(0, 0, 670, 420, backgroundPixmap)
+        painter.end()
+        self.backgroundImage = backgroundCanvas.toImage()
+
+        self.stormEagle = StormEagle()
+        self.stormEagleIndex = 7
+
+        self.timerStormEagle = QtCore.QTimer()
+        self.timerStormEagle.timeout.connect(self.animateStormEagle)
+        self.timerStormEagle.start(200)
+                
         MainWindow.setCentralWidget(self.centralwidget)
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
+    def andOperation(self, backgroundColor, maskColor):
+        red = bin(backgroundColor.red() & maskColor.red())
+        green = bin(backgroundColor.green() & maskColor.green())
+        blue = bin(backgroundColor.blue() & maskColor.blue())
+
+        red = int(red, 2)
+        green = int(green, 2)
+        blue = int(blue, 2)
+
+        # print(str(red) + " " + str(green) + " " + str(blue))
+
+        color = QtGui.QColor(red, green, blue)
+
+        return color
+
+    def orOperation(self, backgroundColor, spriteColor):
+        red = bin(backgroundColor.red() | spriteColor.red())
+        green = bin(backgroundColor.green() | spriteColor.green())
+        blue = bin(backgroundColor.blue() | spriteColor.blue())
+
+        red = int(red, 2)
+        green = int(green, 2)
+        blue = int(blue, 2)
+
+        # print(str(red) + " " + str(green) + " " + str(blue))
+
+        color = QtGui.QColor(red, green, blue)
+
+        return color
+
+    def maskingStormEagle(self):
+        for x in range(self.stormEagle.spriteWidth):
+            for y in range(self.stormEagle.spriteHeight):
+                color1 = self.andOperation(self.backgroundUse.pixelColor(x + self.stormEagle.xPos, y + self.stormEagle.yPos), self.maskUse.pixelColor(x, y))
+                self.backgroundUse.setPixelColor(x + self.stormEagle.xPos, y + self.stormEagle.yPos, color1)
+                color2 = self.orOperation(self.backgroundUse.pixelColor(x + self.stormEagle.xPos, y + self.stormEagle.yPos), self.spriteUse.pixelColor(x, y))
+                self.backgroundUse.setPixelColor(x + self.stormEagle.xPos, y + self.stormEagle.yPos, color2)
+                
+    def animateStormEagle(self):
+        if self.stormEagleIndex == 11:
+            self.stormEagleIndex = 7
+        self.stormEagle.xPos = 200
+        self.stormEagle.yPos = 200
+
+        self.backgroundUse = self.backgroundImage.copy()
+        self.spriteUse = self.stormEagle.sprite[self.stormEagleIndex].copy()
+        self.maskUse = self.stormEagle.mask[self.stormEagleIndex].copy()
+        self.maskingStormEagle()
+
+        canvas = QtGui.QPixmap(670, 420)
+        painter = QtGui.QPainter(canvas)
+        painter.drawImage(0, 0, self.backgroundUse)
+        painter.end()
+
+        self.stormEagleIndex += 1
+
+        self.lbl_MainScreen.setPixmap(canvas)
+    
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
