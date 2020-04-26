@@ -154,14 +154,17 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
     def maskingStormEagle(self):
         for x in range(self.stormEagle.spriteWidth):
             for y in range(self.stormEagle.spriteHeight):
-                if x + self.stormEagle.xPos >= 0 | x + self.stormEagle.xPos <= self.screenWidth| y + self.stormEagle.yPos >= 0 | y + self.stormEagle.yPos <= self.screenWidth:
-                    color1 = self.andOperation(self.backgroundUse.pixelColor(x + self.stormEagle.xPos, y + self.stormEagle.yPos), self.maskUse.pixelColor(x, y))
-                    self.backgroundUse.setPixelColor(x + self.stormEagle.xPos, y + self.stormEagle.yPos, color1)
-                    color2 = self.orOperation(self.backgroundUse.pixelColor(x + self.stormEagle.xPos, y + self.stormEagle.yPos), self.spriteUse.pixelColor(x, y))
-                    self.backgroundUse.setPixelColor(x + self.stormEagle.xPos, y + self.stormEagle.yPos, color2)
-                
+                backgroundX = x + self.stormEagle.xPos - self.stormEagle.centerPoint[self.stormEagleIndex].xPos
+                backgroundY = y + self.stormEagle.yPos - self.stormEagle.centerPoint[self.stormEagleIndex].yPos
+                if backgroundX >= 0 and backgroundX <= self.screenWidth and backgroundY >= 0 and backgroundY <= self.screenHeight:
+                    # print(str(backgroundX) + " " + str(backgroundY))
+                    color1 = self.andOperation(self.backgroundUse.pixelColor(backgroundX, backgroundY), self.maskUse.pixelColor(x, y))
+                    self.backgroundUse.setPixelColor(backgroundX, backgroundY, color1)
+                    color2 = self.orOperation(self.backgroundUse.pixelColor(backgroundX, backgroundY), self.spriteUse.pixelColor(x, y))
+                    self.backgroundUse.setPixelColor(backgroundX, backgroundY, color2)
+
     def animateStormEagle(self):
-        if self.stormEagle.bottomCollision.yPos + self.stormEagle.yPos >= self.platformImage.topCollision.yPos + self.platformImage.yPos:
+        if self.stormEagle.bottomCollision.yPos + self.stormEagle.yPos - self.stormEagle.centerPoint[self.stormEagleIndex].yPos > self.platformImage.topCollision.yPos + self.platformImage.yPos:
             self.stormEagleState = 0
 
         if self.stormEagleIndex > self.stormEagle.state[self.stormEagleState].stateLastIndex:
