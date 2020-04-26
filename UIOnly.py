@@ -115,7 +115,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
         self.timerStormEagle = QtCore.QTimer()
         self.timerStormEagle.timeout.connect(self.animateStormEagle)
-        self.timerStormEagle.start(200)
+        self.timerStormEagle.start(20)
                 
         MainWindow.setCentralWidget(self.centralwidget)
         self.retranslateUi(MainWindow)
@@ -164,11 +164,16 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
                     self.backgroundUse.setPixelColor(backgroundX, backgroundY, color2)
 
     def animateStormEagle(self):
-        if self.stormEagle.bottomCollision.yPos + self.stormEagle.yPos - self.stormEagle.centerPoint[self.stormEagleIndex].yPos > self.platformImage.topCollision.yPos + self.platformImage.yPos:
-            self.stormEagleState = 0
-
-        if self.stormEagleIndex > self.stormEagle.state[self.stormEagleState].stateLastIndex:
+        if self.stormEagleState == 3 and self.stormEagle.bottomCollision.yPos + self.stormEagle.yPos - self.stormEagle.centerPoint[self.stormEagleIndex].yPos >= self.platformImage.topCollision.yPos + self.platformImage.yPos:
+            self.stormEagleState = 2
             self.stormEagleIndex = self.stormEagle.state[self.stormEagleState].stateFirstIndex
+
+        if self.stormEagleState == 2 and self.stormEagleIndex >= self.stormEagle.state[self.stormEagleState].stateLastIndex:
+            self.stormEagleState = 0
+            self.stormEagleIndex = self.stormEagle.state[self.stormEagleState].stateFirstIndex
+
+        if self.stormEagleState == 3 and self.stormEagleIndex > self.stormEagle.state[3].stateLastIndex:
+            self.stormEagleIndex = self.stormEagle.state[3].stateFirstIndex
 
         self.backgroundUse = self.backgroundImage.copy()
         self.spriteUse = self.stormEagle.sprite[self.stormEagleIndex].copy()
@@ -180,10 +185,11 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         painter.drawImage(0, 0, self.backgroundUse)
         painter.end()
 
-        self.stormEagleIndex += 1
+        if self.stormEagleState != 0: 
+            self.stormEagleIndex += 1
 
         if self.stormEagleState == 3:
-            self.stormEagle.yPos += 10
+            self.stormEagle.yPos += 5
 
         self.lbl_MainScreen.setPixmap(canvas)
     
