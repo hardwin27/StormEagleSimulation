@@ -9,10 +9,14 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from StormEagle import StormEagle
+from Platform import Platform
 
 
 class Ui_MainWindow(QtWidgets.QMainWindow):
     def setupUi(self, MainWindow):
+        self.screenWidth = 670
+        self.screenHeight = 420
+
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(965, 477)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
@@ -84,7 +88,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.lbl_Storm.setObjectName("lbl_Storm")
         
         self.lbl_MainScreen = QtWidgets.QLabel(self.centralwidget)
-        self.lbl_MainScreen.setGeometry(QtCore.QRect(30, 20, 670, 420))
+        self.lbl_MainScreen.setGeometry(QtCore.QRect(30, 20, self.screenWidth, self.screenHeight))
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -95,14 +99,19 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.lbl_MainScreen.setObjectName("lbl_MainScreen")
 
         backgroundPixmap = QtGui.QPixmap("Resource/BG4.jpeg")
-        backgroundCanvas = QtGui.QPixmap(670, 420)
+        self.platformImage = Platform(168, 321)
+        backgroundCanvas = QtGui.QPixmap(self.screenWidth, self.screenHeight)
         painter = QtGui.QPainter(backgroundCanvas)
-        painter.drawPixmap(0, 0, 670, 420, backgroundPixmap)
+        painter.drawPixmap(0, 0, self.screenWidth, self.screenHeight, backgroundPixmap)
+        painter.drawImage(self.platformImage.xPos, self.platformImage.yPos, self.platformImage.platformPic)
         painter.end()
         self.backgroundImage = backgroundCanvas.toImage()
 
         self.stormEagle = StormEagle()
-        self.stormEagleIndex = 7
+        self.stormEagleState = 3
+        self.stormEagleIndex = self.stormEagle.state[self.stormEagleState].stateFirstIndex
+        self.stormEagle.xPos = 200
+        self.stormEagle.yPos = 0
 
         self.timerStormEagle = QtCore.QTimer()
         self.timerStormEagle.timeout.connect(self.animateStormEagle)
@@ -145,28 +154,33 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
     def maskingStormEagle(self):
         for x in range(self.stormEagle.spriteWidth):
             for y in range(self.stormEagle.spriteHeight):
-                color1 = self.andOperation(self.backgroundUse.pixelColor(x + self.stormEagle.xPos, y + self.stormEagle.yPos), self.maskUse.pixelColor(x, y))
-                self.backgroundUse.setPixelColor(x + self.stormEagle.xPos, y + self.stormEagle.yPos, color1)
-                color2 = self.orOperation(self.backgroundUse.pixelColor(x + self.stormEagle.xPos, y + self.stormEagle.yPos), self.spriteUse.pixelColor(x, y))
-                self.backgroundUse.setPixelColor(x + self.stormEagle.xPos, y + self.stormEagle.yPos, color2)
+                if x + self.stormEagle.xPos >= 0 | x + self.stormEagle.xPos <= self.screenWidth| y + self.stormEagle.yPos >= 0 | y + self.stormEagle.yPos <= self.screenWidth:
+                    color1 = self.andOperation(self.backgroundUse.pixelColor(x + self.stormEagle.xPos, y + self.stormEagle.yPos), self.maskUse.pixelColor(x, y))
+                    self.backgroundUse.setPixelColor(x + self.stormEagle.xPos, y + self.stormEagle.yPos, color1)
+                    color2 = self.orOperation(self.backgroundUse.pixelColor(x + self.stormEagle.xPos, y + self.stormEagle.yPos), self.spriteUse.pixelColor(x, y))
+                    self.backgroundUse.setPixelColor(x + self.stormEagle.xPos, y + self.stormEagle.yPos, color2)
                 
     def animateStormEagle(self):
-        if self.stormEagleIndex == 11:
-            self.stormEagleIndex = 7
-        self.stormEagle.xPos = 200
-        self.stormEagle.yPos = 200
+        if self.stormEagle.bottomCollision.yPos + self.stormEagle.yPos >= self.platformImage.topCollision.yPos + self.platformImage.yPos:
+            self.stormEagleState = 0
+
+        if self.stormEagleIndex > self.stormEagle.state[self.stormEagleState].stateLastIndex:
+            self.stormEagleIndex = self.stormEagle.state[self.stormEagleState].stateFirstIndex
 
         self.backgroundUse = self.backgroundImage.copy()
         self.spriteUse = self.stormEagle.sprite[self.stormEagleIndex].copy()
         self.maskUse = self.stormEagle.mask[self.stormEagleIndex].copy()
         self.maskingStormEagle()
 
-        canvas = QtGui.QPixmap(670, 420)
+        canvas = QtGui.QPixmap(self.screenWidth, self.screenHeight)
         painter = QtGui.QPainter(canvas)
         painter.drawImage(0, 0, self.backgroundUse)
         painter.end()
 
         self.stormEagleIndex += 1
+
+        if self.stormEagleState == 3:
+            self.stormEagle.yPos += 10
 
         self.lbl_MainScreen.setPixmap(canvas)
     

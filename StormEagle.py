@@ -1,4 +1,11 @@
 from PyQt5 import QtGui
+from CollisionPoint import CollisionPoint
+
+class State():
+    def __init__(self, name, alpha, omega):
+        self.stateName = name
+        self.stateFirstIndex = alpha
+        self.stateLastIndex = omega
 
 class StormEagle():
     def __init__(self):
@@ -8,6 +15,7 @@ class StormEagle():
         self.spriteAmount = 18
         self.xPos = 0
         self.yPos = 0
+        self.bottomCollision = CollisionPoint(38, 98)
         
         self.sprite = []
         for x in range(self.spriteAmount):
@@ -33,4 +41,7 @@ class StormEagle():
                         self.mask[index].setPixelColor(x, y, QtGui.QColor(255, 255, 255, 255))
                     else:
                         self.mask[index].setPixelColor(x, y, QtGui.QColor(0, 0, 0, 255))
+
+        self.state = [State("stand", 0, 0), State("gust", 1, 2), State("intro", 3, 6), State("fly", 7, 10), State("stormCannon", 11, 12), State("dive", 13, 14), State("eggBomb", 15, 17)]
+
         
