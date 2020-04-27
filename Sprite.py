@@ -1,5 +1,4 @@
 from PyQt5 import QtGui
-from CollisionPoint import CollisionPoint
 from Point import Point
 
 class State():
@@ -39,7 +38,7 @@ class Character():
         self.state = []
         self.centerPoint = []
 
-StormEagle = Character("Resource/EagleSprite.png", 76, 99, 18, CollisionPoint(35, 78))
+StormEagle = Character("Resource/EagleSprite.png", 76, 99, 18, Point(35, 78))
 StormEagle.state = [State("stand", 0, 0), State("gust", 1, 2), State("intro", 3, 6), State("fly", 7, 10), State("stormCannon", 11, 12), State("dive", 13, 14), State("eggBomb", 15, 17)]
 StormEagle.centerPoint.append(Point(31, 53))
 StormEagle.centerPoint.append(Point(29, 50))
@@ -60,5 +59,5 @@ StormEagle.centerPoint.append(Point(27, 60))
 StormEagle.centerPoint.append(Point(26, 58))
 StormEagle.centerPoint.append(Point(28, 48))
 
-Megaman = Character("Resource/MegamanSprite.png", 36, 47, 7, CollisionPoint(18, 41))
+Megaman = Character("Resource/MegamanSprite.png", 36, 47, 7, Point(18, 41))
 Megaman.centerPoint.append(Point(18, 26))
