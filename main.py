@@ -3,8 +3,8 @@ from UIOnly import Ui_MainWindow
 import sys
 
 class Control:
-
     def __init__(self):
+        super().__init__()
         self.mainWindow = QtWidgets.QMainWindow()
         self.mainUi = Ui_MainWindow()
         self.mainUi.setupUi(self.mainWindow)
