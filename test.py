@@ -10,6 +10,10 @@ class MainWindow(QtWidgets.QWidget):
         if event.key() == QtCore.Qt.Key_Up:
             print("KIRRAAA KUIN")
 
+    def keyReleaseEvent(self, event):
+        if event.key() == QtCore.Qt.Key_Up:
+            print("BAITSU DE DASUTO")
+
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
 
