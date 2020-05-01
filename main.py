@@ -14,12 +14,12 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
         self.StormEagle = SpriteObject.StormEagle
         self.StormEagleSprites = SpriteObject.StormEagleFly
         self.StormEagle.currentState = State.intro
-        self.StormEagle.posX = 450
-        self.StormEagle.posY = 0
+        self.StormEagle.posX = 300
+        self.StormEagle.posY = 300
 
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.updateScreen)
-        self.timer.start(100)
+        self.timer.start(1000)
 
         backgroundPixmap = QtGui.QPixmap("Resource/BG4.jpeg")
         self.platformImage = Platform(168, 321)
@@ -36,11 +36,11 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
             self.StormEagle.frameTimeCounter = 0
             self.StormEagle.frameIndex = self.StormEagleSprites.array[self.StormEagle.frameIndex].next
         
-        if self.StormEagle.currentState == State.intro:
-            self.StormEagle.vX = 0
-            self.StormEagle.vY = 5
-            self.StormEagle.posX += self.StormEagle.vX
-            self.StormEagle.posY += self.StormEagle.vY
+        # if self.StormEagle.currentState == State.intro:
+        #     self.StormEagle.vX = 0
+        #     self.StormEagle.vY = 5
+        #     self.StormEagle.posX += self.StormEagle.vX
+        #     self.StormEagle.posY += self.StormEagle.vY
 
 
 
@@ -74,20 +74,47 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
 
         return color
 
-    def masking(self, character, frame, background):
-        for x in range(frame.array[character.frameIndex].frameWidth):
-            for y in range(frame.array[character.frameIndex].frameHeight):
-                if character.initFaceDir == character.faceDir:
-                    xForBackground = x + character.posX - frame.array[character.frameIndex].centerX
-                    yForBackground = y + character.posY - frame.array[character.frameIndex].centerY
-                else:
-                    xForBackground = frame.array[character.frameIndex].frameWidth - x + character.posX - frame.array[character.frameIndex].centerX
-                    yForBackground = y + character.posY - frame.array[character.frameIndex].centerY
+    def masking(self, character, frameList, background):
+        for x in range(frameList.array[character.frameIndex].frameWidth - 1):
+            for y in range(frameList.array[character.frameIndex].frameHeight - 1):
+                # if character.initFaceDir == character.faceDir:
+                #     xForBackground = x + character.posX - frame.array[character.frameIndex].centerX
+                #     yForBackground = y + character.posY - frame.array[character.frameIndex].centerY
+                # else:
+                #     xForBackground = frame.array[character.frameIndex].frameWidth - x + character.posX - frame.array[character.frameIndex].centerX
+                #     yForBackground = y + character.posY - frame.array[character.frameIndex].centerY
 
+                
+                
+                
+                if character.initFaceDir == character.faceDir:
+                    i = frameList.array[character.frameIndex].left + x + 1
+                    xForBackground = character.posX + x
+                    print(xForBackground)
+                else:
+                    i = frameList.array[character.frameIndex].right - x - 1
+                    diff = i - frameList.array[character.frameIndex].centerX
+                    # if diff > 0:
+                    # if frameList.array[character.frameIndex].centerX < round(frameList.array[character.frameIndex].frameWidth / 2):
+                    xForBackground = character.posX + x
+                    print(xForBackground)
+
+                    # elif diff > 0:
+                    #     xForBackground = character.posX + x - frameList.array[character.frameIndex].left - 1 - frameList.array[character.frameIndex].centerX
+                    #     print(xForBackground)
+
+                    # else:
+                    #     i = frameList.array[character.frameIndex].left + x + 1
+                    #     xForBackground = character.posX + x - frameList.array[character.frameIndex].centerX
+                    #     print(xForBackground)
+
+                j = frameList.array[character.frameIndex].top + y + 1
+                yForBackground = character.posY + y - frameList.array[character.frameIndex].centerY
+                
                 if xForBackground >= 0 and xForBackground <= self.screenWidth and yForBackground >= 0 and yForBackground <= self.screenHeight:
-                    color1 = self.andOperation(background.pixelColor(xForBackground, yForBackground), frame.array[character.frameIndex].mask.pixelColor(x, y))
+                    color1 = self.andOperation(background.pixelColor(xForBackground, yForBackground), character.maskSheet.pixelColor(i, j))
                     background.setPixelColor(xForBackground, yForBackground, color1)
-                    color2 = self.orOperation(background.pixelColor(xForBackground, yForBackground), frame.array[character.frameIndex].sprite.pixelColor(x, y))
+                    color2 = self.orOperation(background.pixelColor(xForBackground, yForBackground), character.spriteSheet.pixelColor(i , j))
                     background.setPixelColor(xForBackground, yForBackground, color2)
             
         return background
