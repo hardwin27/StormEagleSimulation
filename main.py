@@ -12,7 +12,7 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
         self.setupUi(self)
 
         self.StormEagle = SpriteObject.StormEagle
-        self.StormEagleSprites = SpriteObject.StormEagleIntro
+        self.StormEagleSprites = SpriteObject.StormEagleFly
         self.StormEagle.currentState = State.intro
         self.StormEagle.posX = 450
         self.StormEagle.posY = 0
@@ -39,8 +39,8 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
         if self.StormEagle.currentState == State.intro:
             self.StormEagle.vX = 0
             self.StormEagle.vY = 5
-        self.StormEagle.posX += self.StormEagle.vX
-        self.StormEagle.posY += self.StormEagle.vY
+            self.StormEagle.posX += self.StormEagle.vX
+            self.StormEagle.posY += self.StormEagle.vY
 
 
 
@@ -75,36 +75,21 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
         return color
 
     def masking(self, character, frame, background):
-        if character.name == "Storm Eagle":
-            if character.faceDir == FaceDir.left:
-                x = 1
-            elif character.faceDir == FaceDir.right:
-                x = frame.array[character.frameIndex].frameWidth - 1
-                
+        for x in range(frame.array[character.frameIndex].frameWidth):
+            for y in range(frame.array[character.frameIndex].frameHeight):
+                if character.initFaceDir == character.faceDir:
+                    xForBackground = x + character.posX - frame.array[character.frameIndex].centerX
+                    yForBackground = y + character.posY - frame.array[character.frameIndex].centerY
+                else:
+                    xForBackground = frame.array[character.frameIndex].frameWidth - x + character.posX - frame.array[character.frameIndex].centerX
+                    yForBackground = y + character.posY - frame.array[character.frameIndex].centerY
 
-        while x >= 1 and x <= frame.array[character.frameIndex].frameWidth - 1:
-            
-            y = 1
-            while y >= 1 and y <= frame.array[character.frameIndex].frameHeight - 1:
-                xForBackground = x + character.posX - frame.array[character.frameIndex].centerX
-                yForBackground = y + character.posY - frame.array[character.frameIndex].centerY
-                
                 if xForBackground >= 0 and xForBackground <= self.screenWidth and yForBackground >= 0 and yForBackground <= self.screenHeight:
                     color1 = self.andOperation(background.pixelColor(xForBackground, yForBackground), frame.array[character.frameIndex].mask.pixelColor(x, y))
                     background.setPixelColor(xForBackground, yForBackground, color1)
                     color2 = self.orOperation(background.pixelColor(xForBackground, yForBackground), frame.array[character.frameIndex].sprite.pixelColor(x, y))
                     background.setPixelColor(xForBackground, yForBackground, color2)
-                    # print("working")
-                y += 1
-
-            if character.name == "Storm Eagle":
-                if character.faceDir == FaceDir.left:
-                    x += 1
-                elif character.faceDir == FaceDir.right:
-                    x -= 1
             
-                
-
         return background
 
     def updateScreen(self):
@@ -119,7 +104,11 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
         self.lbl_MainScreen.setPixmap(canvas)
 
     def keyPressEvent(self, event):
-        pass
+        if event.key() == QtCore.Qt.Key_Left:
+            self.StormEagle.faceDir = FaceDir.left
+
+        if event.key() == QtCore.Qt.Key_Right:
+            self.StormEagle.faceDir = FaceDir.right
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)

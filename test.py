@@ -9,6 +9,8 @@ class MainWindow(QtWidgets.QWidget):
     def keyPressEvent(self, event):
         if event.key() == QtCore.Qt.Key_Up:
             print("KIRRAAA KUIN")
+        if event.key() == QtCore.Qt.Key_Right:
+            print("DAI SAN BAKUHATSU")
 
     def keyReleaseEvent(self, event):
         if event.key() == QtCore.Qt.Key_Up:

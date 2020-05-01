@@ -29,8 +29,8 @@ class Frame:
         self.next = next
         self.sprite = sprite
         self.mask = mask
-        self.frameWidth = self.right - self.left
-        self.frameHeight = self.bottom - self.top
+        self.frameWidth = self.right - self.left - 1
+        self.frameHeight = self.bottom - self.top - 1
 
 class FrameList:
     def __init__(self, character, amount):
@@ -39,9 +39,9 @@ class FrameList:
         self.amount = amount
 
     def insert(self, centerX, centerY, top, bottom, left, right, maxCounterVal, next):
-        tempSprite = self.spriteSheet.copy(left, top, right - left, bottom - top)
+        tempSprite = self.spriteSheet.copy(left + 1, top + 1, right - left, bottom - top)
         
-        tempMask = self.spriteSheet.copy(left, top, right - left, bottom - top)
+        tempMask = self.spriteSheet.copy(left + 1, top + 1, right - left, bottom - top)
         for x in range(right - left):
             for y in range(bottom - top):
                 if tempMask.pixelColor(x, y) == QtGui.QColor(0, 0, 0, 255):
@@ -62,10 +62,11 @@ class Character:
         self.frameIndex = 0
         self.frameTimeCounter = 0
         self.faceDir = faceDir
+        self.initFaceDir = faceDir
 
 StormEagle = Character("Storm Eagle", "Resource/EagleSprite.png", FaceDir.left)
 
-StormEagleIntro = FrameList(StormEagle, 5)
+StormEagleFly = FrameList(StormEagle, 5)
 StormEagleStand = FrameList(StormEagle, 1)
 # StormEagleGust = FrameList(StormEagle)
 # StormEagleShootStormCannon = FrameList(StormEagle)
@@ -74,7 +75,7 @@ StormEagleStand = FrameList(StormEagle, 1)
 # StormEagleThrowEggBomb = FrameList(StormEagle)
 # StormEagleStagger = FrameList(StormEagle)
 
-StormEagleIntro.insert(562, 50, 25, 81, 541, 596, 1, 1)
-StormEagleIntro.insert(638, 55, 25, 86, 607, 677, 1, 2)
-StormEagleIntro.insert(712, 63, 4, 94, 687, 749, 1, 3)
-StormEagleIntro.insert(638, 55, 25, 86, 607, 677, 1, 0)
+StormEagleFly.insert(562, 50, 25, 81, 541, 596, 1, 1)
+StormEagleFly.insert(638, 55, 25, 86, 607, 677, 1, 2)
+StormEagleFly.insert(712, 63, 4, 94, 687, 749, 1, 3)
+StormEagleFly.insert(638, 55, 25, 86, 607, 677, 1, 0)
