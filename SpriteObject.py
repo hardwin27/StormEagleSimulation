@@ -12,6 +12,7 @@ class State(Enum):
     throwEggBomb =  auto()
     shootStormTornado = auto()
     stagger = auto()
+    gust = auto()
 
 class FaceDir(Enum):
     left = auto()
@@ -69,10 +70,9 @@ StormEagle = Character("Storm Eagle", "Resource/EagleSprite.png", FaceDir.left)
 StormEagleFly = FrameList(StormEagle, 4)
 StormEagleIntro = FrameList(StormEagle, 4)
 StormEagleStand = FrameList(StormEagle, 1)
-# StormEagleGust = FrameList(StormEagle)
-# StormEagleShootStormCannon = FrameList(StormEagle)
-# StormEagleHover = FrameList(StormEagle)
-# StormEagleThrowEggBomb = FrameList(StormEagle)
+StormEagleGust = FrameList(StormEagle, 2)
+StormEagleShootStormCannon = FrameList(StormEagle, 2)
+StormEagleThrowEggBomb = FrameList(StormEagle, 3)
 # StormEagleStagger = FrameList(StormEagle)
 
 StormEagleFly.insert(562, 50, 25, 81, 541, 596, 1, 1)
@@ -86,3 +86,13 @@ StormEagleIntro.insert(412, 64, 5, 89, 387, 449, 1, 3)
 StormEagleIntro.insert(485, 65, 6, 90, 459, 523, 1, 0)
 
 StormEagleStand.insert(31, 53, 22, 79, 12, 58, 1, 0)
+
+StormEagleGust.insert(105, 50, 25, 76, 86, 141, 1, 1)
+StormEagleGust.insert(184, 58, 28, 83, 153, 222, 1, 0)
+
+StormEagleShootStormCannon.insert(873, 52, 21, 78, 843, 900, 1, 1)
+StormEagleShootStormCannon.insert(948, 53, 21, 78, 917, 975, 9, 0)
+
+StormEagleThrowEggBomb.insert(1167, 60, 2, 93, 1146, 1208, 1, 1)
+StormEagleThrowEggBomb.insert(1242, 59, 0, 92, 1218, 1282, 1, 2)
+StormEagleThrowEggBomb.insert(1320, 48, 18, 81, 1291, 1361, 1, 0)

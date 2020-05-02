@@ -31,6 +31,7 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
         self.backgroundImage = backgroundCanvas.toImage()
 
     def updateStormEagle(self):
+        print(self.StormEagle.currentState)
         self.StormEagle.frameTimeCounter += 1
         if self.StormEagle.frameTimeCounter > self.StormEagleSprites.array[self.StormEagle.frameIndex].maxCounterVal:
             self.StormEagle.frameTimeCounter = 0
@@ -53,6 +54,12 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
         if self.StormEagle.currentState == State.intro and self.StormEagle.frameIndex == self.StormEagleSprites.amount - 1:
             self.StormEagle.currentState = State.stand
             self.StormEagleSprites = SpriteObject.StormEagleStand
+            self.StormEagle.frameTimeCounter = 0
+            self.StormEagle.frameIndex = 0
+
+        if self.StormEagle.currentState == State.throwEggBomb and self.StormEagle.frameIndex == self.StormEagleSprites.amount - 1:
+            self.StormEagle.currentState = State.fly
+            self.StormEagleSprites = SpriteObject.StormEagleFly
             self.StormEagle.frameTimeCounter = 0
             self.StormEagle.frameIndex = 0
             
@@ -136,6 +143,87 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
 
         if event.key() == QtCore.Qt.Key_Right:
             self.StormEagle.faceDir = FaceDir.right
+
+        if event.key() == QtCore.Qt.Key_Z:
+            if self.StormEagle.currentState == State.stand:
+                self.StormEagle.currentState = State.gust
+                self.StormEagleSprites = SpriteObject.StormEagleGust
+                self.StormEagle.frameIndex = 0
+                self.StormEagle.frameTimeCounter = 0
+
+        if event.key() == QtCore.Qt.Key_X:
+            if self.StormEagle.currentState == State.stand:
+                self.StormEagle.currentState = State.shootStormTornado
+                self.StormEagleSprites = SpriteObject.StormEagleShootStormCannon
+                self.StormEagle.frameIndex = 0
+                self.StormEagle.frameTimeCounter = 0
+
+        if event.key() == QtCore.Qt.Key_Up:
+            if self.StormEagle.currentState == State.fly or self.StormEagle.currentState == State.stand:
+                self.StormEagle.currentState = State.fly
+                self.StormEagleSprites = SpriteObject.StormEagleFly
+                # self.StormEagle.frameIndex = 0
+                # self.StormEagle.frameTimeCounter = 0
+                self.StormEagle.vX = 0
+                self.StormEagle.vY = -5
+                self.StormEagle.posX += self.StormEagle.vX
+                self.StormEagle.posY += self.StormEagle.vY
+                
+        if event.key() == QtCore.Qt.Key_Down:
+            if self.StormEagle.currentState == State.fly:
+                self.StormEagle.currentState = State.fly
+                self.StormEagleSprites = SpriteObject.StormEagleFly
+                # self.StormEagle.frameIndex = 0
+                # self.StormEagle.frameTimeCounter = 0
+                self.StormEagle.vX = 0
+                self.StormEagle.vY = 5
+                self.StormEagle.posX += self.StormEagle.vX
+                self.StormEagle.posY += self.StormEagle.vY
+                if self.StormEagle.posY + self.StormEagleSprites.array[self.StormEagle.frameIndex].bottom - self.StormEagleSprites.array[self.StormEagle.frameIndex].centerY > self.platformImage.top + self.platformImage.yPos:
+                    self.StormEagle.vX = 0
+                    self.StormEagle.vY = 0
+                    self.StormEagle.currentState = State.stand
+                    self.StormEagleSprites = SpriteObject.StormEagleStand
+                    self.StormEagle.frameTimeCounter = 0
+                    self.StormEagle.frameIndex = 0
+
+        if event.key() == QtCore.Qt.Key_Left:
+            if self.StormEagle.currentState == State.fly:
+                self.StormEagle.vX = -5
+                self.StormEagle.vY = 0
+                self.StormEagle.posX += self.StormEagle.vX
+                self.StormEagle.posY += self.StormEagle.vY
+
+        if event.key() == QtCore.Qt.Key_Right:
+            if self.StormEagle.currentState == State.fly:
+                self.StormEagle.vX = 5
+                self.StormEagle.vY = 0
+                self.StormEagle.posX += self.StormEagle.vX
+                self.StormEagle.posY += self.StormEagle.vY
+
+        if event.key() == QtCore.Qt.Key_C:
+            if self.StormEagle.currentState == State.fly:
+                self.StormEagle.currentState = State.throwEggBomb
+                self.StormEagleSprites = SpriteObject.StormEagleThrowEggBomb
+                self.StormEagle.frameTimeCounter = 0
+                self.StormEagle.frameIndex = 0
+
+    def keyReleaseEvent(self, event):
+        if event.key() == QtCore.Qt.Key_Z:
+            if self.StormEagle.currentState == State.gust:
+                self.StormEagle.currentState = State.stand
+                self.StormEagleSprites = SpriteObject.StormEagleStand
+                self.StormEagle.frameIndex = 0
+                self.StormEagle.frameTimeCounter = 0
+
+        if event.key() == QtCore.Qt.Key_X:
+            if self.StormEagle.currentState == State.shootStormTornado:
+                self.StormEagle.currentState = State.stand
+                self.StormEagleSprites = SpriteObject.StormEagleStand
+                self.StormEagle.frameIndex = 0
+                self.StormEagle.frameTimeCounter = 0
+
+        
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
