@@ -13,7 +13,7 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.StormEagle = SpriteObject.StormEagle
         self.StormEagleSprites = SpriteObject.StormEagleFly
-        self.StormEagle.currentState = State.intro
+        self.StormEagle.currentState = State.reappear
         self.StormEagle.posX = 450
         self.StormEagle.posY = 0
 
@@ -35,15 +35,27 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
         if self.StormEagle.frameTimeCounter > self.StormEagleSprites.array[self.StormEagle.frameIndex].maxCounterVal:
             self.StormEagle.frameTimeCounter = 0
             self.StormEagle.frameIndex = self.StormEagleSprites.array[self.StormEagle.frameIndex].next
-        
-        if self.StormEagle.currentState == State.intro:
+
+        if self.StormEagle.currentState == State.reappear:
             self.StormEagle.vX = 0
             self.StormEagle.vY = 5
             self.StormEagle.posX += self.StormEagle.vX
             self.StormEagle.posY += self.StormEagle.vY
 
-
-
+        if self.StormEagle.posY + self.StormEagleSprites.array[self.StormEagle.frameIndex].bottom - self.StormEagleSprites.array[self.StormEagle.frameIndex].centerY > self.platformImage.top + self.platformImage.yPos:
+            self.StormEagle.vX = 0
+            self.StormEagle.vY = 0
+            self.StormEagle.currentState = State.intro
+            self.StormEagleSprites = SpriteObject.StormEagleIntro
+            self.StormEagle.frameTimeCounter = 0
+            self.StormEagle.frameIndex = 0
+        
+        if self.StormEagle.currentState == State.intro and self.StormEagle.frameIndex == self.StormEagleSprites.amount - 1:
+            self.StormEagle.currentState = State.stand
+            self.StormEagleSprites = SpriteObject.StormEagleStand
+            self.StormEagle.frameTimeCounter = 0
+            self.StormEagle.frameIndex = 0
+            
     def andOperation(self, backgroundColor, maskColor):
         red = bin(backgroundColor.red() & maskColor.red())
         green = bin(backgroundColor.green() & maskColor.green())
