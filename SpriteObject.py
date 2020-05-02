@@ -48,7 +48,7 @@ class FrameList:
                     tempMask.setPixelColor(x, y, QtGui.QColor(255, 255, 255, 255))
                 else:
                     tempMask.setPixelColor(x, y, QtGui.QColor(0, 0, 0, 255))
-        self.array.append(Frame(centerX, centerY, top, bottom, left, right, maxCounterVal, next, tempSprite, tempMask))
+        self.array.append(Frame(centerX - left, centerY - left, top - left, bottom - left, left - left, right - left, maxCounterVal, next, tempSprite, tempMask))
 
 class Character:
     def __init__(self, name, spriteUrl, faceDir):

@@ -19,7 +19,7 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.updateScreen)
-        self.timer.start(1000)
+        self.timer.start(100)
 
         backgroundPixmap = QtGui.QPixmap("Resource/BG4.jpeg")
         self.platformImage = Platform(168, 321)
@@ -74,15 +74,15 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
 
         return color
 
-    def masking(self, character, frameList, background):  
+    def masking(self, character, frameList, background):
         if character.faceDir == character.initFaceDir:
             x = 1
             while x < frameList.array[character.frameIndex].frameWidth:
                 xForBackground = x + character.posX - 1 - frameList.array[character.frameIndex].centerX
                 y = 1
                 while y < frameList.array[character.frameIndex].frameHeight:
-                    yForBackground = y + character.posX - 1 - frameList.array[character.frameIndex].centerY
-                    if xForBackground >= 0 and xForBackground <= self.screenWidth and yForBackground >= 0 and yForBackground <= self.screenHeight:
+                    yForBackground = y + character.posY - 1 - frameList.array[character.frameIndex].centerY
+                    if xForBackground >= 0 and xForBackground <= self.screenWidth - 1 and yForBackground >= 0 and yForBackground <= self.screenHeight - 1:
                         color1 = self.andOperation(background.pixelColor(xForBackground, yForBackground), frameList.array[character.frameIndex].mask.pixelColor(x, y))
                         background.setPixelColor(xForBackground, yForBackground, color1)
                         color2 = self.orOperation(background.pixelColor(xForBackground, yForBackground), frameList.array[character.frameIndex].sprite.pixelColor(x, y))
@@ -97,8 +97,8 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
                 y = 1
                 while y < frameList.array[character.frameIndex].frameHeight:
                     j  = y
-                    yForBackground = y + character.posX - 1 - frameList.array[character.frameIndex].centerY
-                    if xForBackground >= 0 and xForBackground <= self.screenWidth and yForBackground >= 0 and yForBackground <= self.screenHeight:
+                    yForBackground = y + character.posY - 1 - frameList.array[character.frameIndex].centerY
+                    if xForBackground >= 0 and xForBackground <= self.screenWidth - 1 and yForBackground >= 0 and yForBackground <= self.screenHeight - 1:
                         color1 = self.andOperation(background.pixelColor(xForBackground, yForBackground), frameList.array[character.frameIndex].mask.pixelColor(i, j))
                         background.setPixelColor(xForBackground, yForBackground, color1)
                         color2 = self.orOperation(background.pixelColor(xForBackground, yForBackground), frameList.array[character.frameIndex].sprite.pixelColor(i, j))
