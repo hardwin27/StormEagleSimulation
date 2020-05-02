@@ -20,8 +20,8 @@ class FaceDir(Enum):
 
 class Frame:
     def __init__(self, centerX, centerY, top, bottom, left, right, maxCounterVal, next, sprite, mask):
-        self.centerX = centerX - left
-        self.centerY = centerY - top
+        self.centerX = centerX 
+        self.centerY = centerY
         self.top = top
         self.bottom = bottom
         self.left = left

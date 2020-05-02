@@ -31,11 +31,7 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
         self.backgroundImage = backgroundCanvas.toImage()
 
     def updateStormEagle(self):
-        print(self.StormEagle.currentState)
         self.StormEagle.frameTimeCounter += 1
-        if self.StormEagle.frameTimeCounter > self.StormEagleSprites.array[self.StormEagle.frameIndex].maxCounterVal:
-            self.StormEagle.frameTimeCounter = 0
-            self.StormEagle.frameIndex = self.StormEagleSprites.array[self.StormEagle.frameIndex].next
 
         if self.StormEagle.currentState == State.reappear:
             self.StormEagle.vX = 0
@@ -43,7 +39,7 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
             self.StormEagle.posX += self.StormEagle.vX
             self.StormEagle.posY += self.StormEagle.vY
 
-        if self.StormEagle.posY + self.StormEagleSprites.array[self.StormEagle.frameIndex].bottom - self.StormEagleSprites.array[self.StormEagle.frameIndex].centerY > self.platformImage.top + self.platformImage.yPos:
+        if self.StormEagle.currentState == State.reappear and self.StormEagle.posY + self.StormEagleSprites.array[self.StormEagle.frameIndex].bottom - self.StormEagleSprites.array[self.StormEagle.frameIndex].centerY > self.platformImage.top + self.platformImage.yPos:
             self.StormEagle.vX = 0
             self.StormEagle.vY = 0
             self.StormEagle.currentState = State.intro
@@ -62,6 +58,23 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
             self.StormEagleSprites = SpriteObject.StormEagleFly
             self.StormEagle.frameTimeCounter = 0
             self.StormEagle.frameIndex = 0
+
+        if self.StormEagle.currentState == State.gust and self.StormEagle.frameIndex == self.StormEagleSprites.amount - 1:
+            self.StormEagle.currentState = State.stand
+            self.StormEagleSprites = SpriteObject.StormEagleStand
+            self.StormEagle.frameTimeCounter = 0
+            self.StormEagle.frameIndex = 0
+
+        if self.StormEagle.currentState == State.shootStormTornado and self.StormEagle.frameIndex == self.StormEagleSprites.amount - 1 and self.StormEagle.frameTimeCounter >= self.StormEagleSprites.array[self.StormEagle.frameIndex].maxCounterVal:
+            self.StormEagle.currentState = State.stand
+            self.StormEagleSprites = SpriteObject.StormEagleStand
+            self.StormEagle.frameTimeCounter = 0
+            self.StormEagle.frameIndex = 0
+
+        # self.StormEagle.frameTimeCounter += 1
+        if self.StormEagle.frameTimeCounter > self.StormEagleSprites.array[self.StormEagle.frameIndex].maxCounterVal:
+            self.StormEagle.frameTimeCounter = 0
+            self.StormEagle.frameIndex = self.StormEagleSprites.array[self.StormEagle.frameIndex].next
             
     def andOperation(self, backgroundColor, maskColor):
         red = bin(backgroundColor.red() & maskColor.red())
@@ -71,8 +84,6 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
         red = int(red, 2)
         green = int(green, 2)
         blue = int(blue, 2)
-
-        # print(str(red) + " " + str(green) + " " + str(blue))
 
         color = QtGui.QColor(red, green, blue)
 
@@ -86,8 +97,6 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
         red = int(red, 2)
         green = int(green, 2)
         blue = int(blue, 2)
-
-        # print(str(red) + " " + str(green) + " " + str(blue))
 
         color = QtGui.QColor(red, green, blue)
 
@@ -162,8 +171,6 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
             if self.StormEagle.currentState == State.fly or self.StormEagle.currentState == State.stand:
                 self.StormEagle.currentState = State.fly
                 self.StormEagleSprites = SpriteObject.StormEagleFly
-                # self.StormEagle.frameIndex = 0
-                # self.StormEagle.frameTimeCounter = 0
                 self.StormEagle.vX = 0
                 self.StormEagle.vY = -5
                 self.StormEagle.posX += self.StormEagle.vX
@@ -173,8 +180,6 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
             if self.StormEagle.currentState == State.fly:
                 self.StormEagle.currentState = State.fly
                 self.StormEagleSprites = SpriteObject.StormEagleFly
-                # self.StormEagle.frameIndex = 0
-                # self.StormEagle.frameTimeCounter = 0
                 self.StormEagle.vX = 0
                 self.StormEagle.vY = 5
                 self.StormEagle.posX += self.StormEagle.vX
@@ -207,21 +212,6 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.StormEagleSprites = SpriteObject.StormEagleThrowEggBomb
                 self.StormEagle.frameTimeCounter = 0
                 self.StormEagle.frameIndex = 0
-
-    def keyReleaseEvent(self, event):
-        if event.key() == QtCore.Qt.Key_Z:
-            if self.StormEagle.currentState == State.gust:
-                self.StormEagle.currentState = State.stand
-                self.StormEagleSprites = SpriteObject.StormEagleStand
-                self.StormEagle.frameIndex = 0
-                self.StormEagle.frameTimeCounter = 0
-
-        if event.key() == QtCore.Qt.Key_X:
-            if self.StormEagle.currentState == State.shootStormTornado:
-                self.StormEagle.currentState = State.stand
-                self.StormEagleSprites = SpriteObject.StormEagleStand
-                self.StormEagle.frameIndex = 0
-                self.StormEagle.frameTimeCounter = 0
 
         
 
