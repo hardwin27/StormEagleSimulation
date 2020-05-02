@@ -11,16 +11,6 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
         QtWidgets.QMainWindow.__init__(self, parent=parent)
         self.setupUi(self)
 
-        self.StormEagle = SpriteObject.StormEagle
-        self.StormEagleSprites = SpriteObject.StormEagleFly
-        self.StormEagle.currentState = State.reappear
-        self.StormEagle.posX = 450
-        self.StormEagle.posY = 0
-
-        self.timer = QtCore.QTimer()
-        self.timer.timeout.connect(self.updateScreen)
-        self.timer.start(100)
-
         backgroundPixmap = QtGui.QPixmap("Resource/BG4.jpeg")
         self.platformImage = Platform(168, 321)
         backgroundCanvas = QtGui.QPixmap(self.screenWidth, self.screenHeight)
@@ -29,6 +19,22 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
         painter.drawImage(self.platformImage.xPos, self.platformImage.yPos, self.platformImage.platformPic)
         painter.end()
         self.backgroundImage = backgroundCanvas.toImage()
+
+        self.StormEagle = SpriteObject.StormEagle
+        self.StormEagleSprites = SpriteObject.StormEagleFly
+        self.StormEagle.currentState = State.reappear
+        self.StormEagle.posX = 450
+        self.StormEagle.posY = 0
+
+        self.Megaman = SpriteObject.Megaman
+        self.Megaman.currentState = State.stand
+        self.MegamanSprite = SpriteObject.MegamanStand
+        self.Megaman.posX = 200
+        self.Megaman.posY = 200
+
+        self.timer = QtCore.QTimer()
+        self.timer.timeout.connect(self.updateScreen)
+        self.timer.start(100)
 
     def updateStormEagle(self):
         self.StormEagle.frameTimeCounter += 1
@@ -46,6 +52,7 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
             self.StormEagleSprites = SpriteObject.StormEagleIntro
             self.StormEagle.frameTimeCounter = 0
             self.StormEagle.frameIndex = 0
+            # print(str(self.StormEagle.posX) + " " + str(self.StormEagle.posY))
         
         if self.StormEagle.currentState == State.intro and self.StormEagle.frameIndex == self.StormEagleSprites.amount - 1:
             self.StormEagle.currentState = State.stand
@@ -76,6 +83,14 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
             self.StormEagle.frameTimeCounter = 0
             self.StormEagle.frameIndex = self.StormEagleSprites.array[self.StormEagle.frameIndex].next
             
+    def updateMegaman(self):
+        self.Megaman.frameTimeCounter += 1
+
+        
+        if self.Megaman.frameTimeCounter > self.MegamanSprite.array[self.Megaman.frameIndex].maxCounterVal:
+            self.Megaman.frameTimeCounter = 0
+            self.Megaman.frameIndex = self.MegamanSprite.array[self.Megaman.frameIndex].next
+    
     def andOperation(self, backgroundColor, maskColor):
         red = bin(backgroundColor.red() & maskColor.red())
         green = bin(backgroundColor.green() & maskColor.green())
@@ -137,8 +152,10 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def updateScreen(self):
         self.updateStormEagle()
+        self.updateMegaman()
         backgroundDrawn = self.backgroundImage.copy()
         backgroundDrawn = self.masking(self.StormEagle, self.StormEagleSprites, backgroundDrawn)
+        backgroundDrawn = self.masking(self.Megaman, self.MegamanSprite, backgroundDrawn)
         canvas = QtGui.QPixmap(self.screenWidth, self.screenHeight)
         painter = QtGui.QPainter(canvas)
         painter.drawImage(0, 0, backgroundDrawn)

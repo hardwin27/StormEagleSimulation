@@ -96,3 +96,18 @@ StormEagleShootStormCannon.insert(948, 53, 21, 78, 917, 975, 9, 0)
 StormEagleThrowEggBomb.insert(1167, 60, 2, 93, 1146, 1208, 1, 1)
 StormEagleThrowEggBomb.insert(1242, 59, 0, 92, 1218, 1282, 1, 2)
 StormEagleThrowEggBomb.insert(1320, 48, 18, 81, 1291, 1361, 1, 0)
+
+
+Megaman = Character("Megaman", "Resource/MegamanSprite", FaceDir.right)
+
+MegamanStand = FrameList(Megaman, 3)
+MegamanStagger = FrameList(Megaman, 4)
+
+MegamanStand.insert(18, 26, 3, 43, 0, 34, 10, 1)
+MegamanStand.insert(54, 25, 2, 42, 36, 70, 10, 2)
+MegamanStand.insert(90, 25, 2, 42, 72, 106, 5, 0)
+
+MegamanStagger.insert(126, 26, 3, 43, 108, 143, 1, 1)
+MegamanStagger.insert(165, 23, 2, 43, 146, 181, 1, 2)
+MegamanStagger.insert(202, 22, 0, 44, 184, 216, 1, 3)
+MegamanStagger.insert(237, 22, 1, 44, 218, 257, 1, 0)
