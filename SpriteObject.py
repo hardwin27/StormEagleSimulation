@@ -29,8 +29,8 @@ class Frame:
         self.next = next
         self.sprite = sprite
         self.mask = mask
-        self.frameWidth = self.right - self.left - 1
-        self.frameHeight = self.bottom - self.top - 1
+        self.frameWidth = self.right - self.left
+        self.frameHeight = self.bottom - self.top
 
 class FrameList:
     def __init__(self, character, amount):
@@ -39,9 +39,9 @@ class FrameList:
         self.amount = amount
 
     def insert(self, centerX, centerY, top, bottom, left, right, maxCounterVal, next):
-        tempSprite = self.spriteSheet.copy(left + 1, top + 1, right - left, bottom - top)
+        tempSprite = self.spriteSheet.copy(left, top, right - left, bottom - top)
         
-        tempMask = self.spriteSheet.copy(left + 1, top + 1, right - left, bottom - top)
+        tempMask = self.spriteSheet.copy(left, top, right - left, bottom - top)
         for x in range(right - left):
             for y in range(bottom - top):
                 if tempMask.pixelColor(x, y) == QtGui.QColor(0, 0, 0, 255):
