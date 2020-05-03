@@ -29,8 +29,8 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
         self.Megaman = SpriteObject.Megaman
         self.Megaman.currentState = State.stand
         self.MegamanSprite = SpriteObject.MegamanStand
-        self.Megaman.posX = 200
-        self.Megaman.posY = 200
+        self.Megaman.posX = 250
+        self.Megaman.posY = self.platformImage.yPos - self.MegamanSprite.array[self.Megaman.frameIndex].bottom + self.MegamanSprite.array[self.Megaman.frameIndex].centerY 
 
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.updateScreen)
@@ -85,6 +85,7 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
             
     def updateMegaman(self):
         self.Megaman.frameTimeCounter += 1
+
 
         
         if self.Megaman.frameTimeCounter > self.MegamanSprite.array[self.Megaman.frameIndex].maxCounterVal:
