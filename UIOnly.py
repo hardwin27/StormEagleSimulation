@@ -77,7 +77,7 @@ class Ui_MainWindow(object):
         self.lbl_Egg.setObjectName("lbl_Egg")
         
         self.lbl_Reappear = QtWidgets.QLabel(self.centralwidget)
-        self.lbl_Reappear.setGeometry(QtCore.QRect(720, 210, 91, 16))
+        self.lbl_Reappear.setGeometry(QtCore.QRect(720, 210, 100, 16))
         font = QtGui.QFont()
         font.setFamily("8514oem")
         self.lbl_Reappear.setFont(font)
@@ -234,7 +234,7 @@ class Ui_MainWindow(object):
         self.lbl_Ctrl.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" color:#ffffff;\">Controls</span></p></body></html>"))
         self.lbl_Gust.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" color:#ffffff;\">Gust    : Z</span></p></body></html>"))
         self.lbl_Egg.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" color:#ffffff;\">Egg Bomb: C</span></p></body></html>"))
-        self.lbl_Reappear.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" color:#ffffff;\">Reappear:</span></p></body></html>"))
+        self.lbl_Reappear.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" color:#ffffff;\">Reappear: Auto</span></p></body></html>"))
         self.lbl_Dive.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" color:#ffffff;\">Dive    : Space</span></p></body></html>"))
         self.lbl_Storm.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" color:#ffffff;\">Storm   : X</span></p></body></html>"))
 

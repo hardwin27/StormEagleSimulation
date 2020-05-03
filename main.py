@@ -5,6 +5,7 @@ import SpriteObject
 from SpriteObject import State, FaceDir
 from Platform import Platform
 import sys
+import copy
 
 class Control(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None):
@@ -32,6 +33,12 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
         self.Megaman.posX = round(self.screenWidth/2)
         self.Megaman.posY = self.platformImage.yPos - self.MegamanSprite.array[self.Megaman.frameIndex].bottom + self.MegamanSprite.array[self.Megaman.frameIndex].centerY 
 
+        # self.StormProjectile = SpriteObject.StormCannon
+        # self.StormProjectile.currentState = State.inscreen
+        # self.StormProjectileSprite = SpriteObject.StormCannonProjectile
+        self.StormProjectile = []
+        self.StormProjectileSprite = []
+        
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.updateScreen)
         self.timer.start(100)
@@ -77,15 +84,11 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
             self.StormEagleSprites = SpriteObject.StormEagleStand
             self.StormEagle.frameTimeCounter = 0
             self.StormEagle.frameIndex = 0
+            self.addStormCannonProjectile(self.StormEagle.posX, self.StormEagle.posY, self.StormEagle.faceDir)
 
         if self.StormEagle.currentState == State.dive:
             self.StormEagle.posX += self.StormEagle.vX
             self.StormEagle.posY += self.StormEagle.vY 
-
-        # self.StormEagle.frameTimeCounter += 1
-        if self.StormEagle.frameTimeCounter > self.StormEagleSprites.array[self.StormEagle.frameIndex].maxCounterVal:
-            self.StormEagle.frameTimeCounter = 0
-            self.StormEagle.frameIndex = self.StormEagleSprites.array[self.StormEagle.frameIndex].next
 
         if self.isOffscreen(self.StormEagle, self.StormEagleSprites) != "nope" and self.StormEagle.currentState != State.fly:
             self.StormEagle.currentState = State.reappear
@@ -106,6 +109,11 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
             self.StormEagleSprites = SpriteObject.StormEagleStand
             self.StormEagle.frameTimeCounter = 0
             self.StormEagle.frameIndex = 0
+
+        # self.StormEagle.frameTimeCounter += 1
+        if self.StormEagle.frameTimeCounter > self.StormEagleSprites.array[self.StormEagle.frameIndex].maxCounterVal:
+            self.StormEagle.frameTimeCounter = 0
+            self.StormEagle.frameIndex = self.StormEagleSprites.array[self.StormEagle.frameIndex].next
             
     def updateMegaman(self):
         self.Megaman.frameTimeCounter += 1
@@ -115,6 +123,45 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
         if self.Megaman.frameTimeCounter > self.MegamanSprite.array[self.Megaman.frameIndex].maxCounterVal:
             self.Megaman.frameTimeCounter = 0
             self.Megaman.frameIndex = self.MegamanSprite.array[self.Megaman.frameIndex].next
+    
+    def updateStormProjectile(self, background):
+        if self.StormProjectile != []:
+            for x in range(len(self.StormProjectile)):
+                self.StormProjectile[x].frameTimeCounter += 1
+
+                self.StormProjectile[x].posX += self.StormProjectile[x].vX
+
+                if self.StormProjectile[x].posX < 0:
+                    self.StormProjectile[x].currentState = State.offscrean
+
+                # self.StormProjectile[x].frameTimeCounter += 1
+                if self.StormProjectile[x].frameTimeCounter > self.StormProjectileSprite[x].array[self.StormProjectile[x].frameIndex].maxCounterVal:
+                    self.StormProjectile[x].frameTimeCounter = 0
+                    self.StormProjectile[x].frameIndex = self.StormProjectileSprite[x].array[self.StormProjectile[x].frameIndex].next
+
+            for x in range(len(self.StormProjectile)):
+                # backgroundDrawn = self.masking(self.StormEagle, self.StormEagleSprites, backgroundDrawn)
+                background = self.masking(self.StormProjectile[x], self.StormProjectileSprite[x], background)
+
+            self.StormProjectile = [x for x in self.StormProjectile if x.currentState != State.offscrean]
+
+        return background
+
+    def addStormCannonProjectile(self, posX, posY, faceDir):
+        tempStormProjectile = copy.copy(SpriteObject.StormCannon)
+        tempStormProjectile.currentState = State.inscreen
+        if faceDir == FaceDir.left:
+            tempStormProjectile.posX = posX - 50
+            tempStormProjectile.vX = - 20
+        else:
+            tempStormProjectile.posX = posX + 50
+            tempStormProjectile.vX = + 20
+        tempStormProjectile.posY = posY
+        tempStormProjectile.faceDir = faceDir
+        tempStormProjectileSprite = copy.copy(SpriteObject.StormCannonProjectile)
+
+        self.StormProjectile.append(tempStormProjectile)
+        self.StormProjectileSprite.append(tempStormProjectileSprite)
     
     def isOffscreen(self, character, frameList):
         # if character.posY < 0 or character.posY >= self.screenHeight or character.posX < 0 or character.posX >= self.screenWidth:
@@ -189,6 +236,7 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
         self.updateMegaman()
         backgroundDrawn = self.backgroundImage.copy()
         backgroundDrawn = self.masking(self.StormEagle, self.StormEagleSprites, backgroundDrawn)
+        backgroundDrawn = self.updateStormProjectile(backgroundDrawn)
         backgroundDrawn = self.masking(self.Megaman, self.MegamanSprite, backgroundDrawn)
         canvas = QtGui.QPixmap(self.screenWidth, self.screenHeight)
         painter = QtGui.QPainter(canvas)
