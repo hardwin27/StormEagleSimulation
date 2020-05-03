@@ -37,7 +37,10 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
         # self.StormProjectile.currentState = State.inscreen
         # self.StormProjectileSprite = SpriteObject.StormCannonProjectile
         self.StormProjectile = []
-        self.StormProjectileSprite = []
+        self.StormProjectileSprite = SpriteObject.StormCannonProjectile
+
+        self.GustProjectile = []
+        self.GustProjectileSprite = SpriteObject.GustProjectile
         
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.updateScreen)
@@ -78,6 +81,7 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
             self.StormEagleSprites = SpriteObject.StormEagleStand
             self.StormEagle.frameTimeCounter = 0
             self.StormEagle.frameIndex = 0
+            self.addGustProjectile(self.StormEagle.posX, self.StormEagle.posY, self.StormEagle.faceDir)
 
         if self.StormEagle.currentState == State.shootStormTornado and self.StormEagle.frameIndex == self.StormEagleSprites.amount - 1 and self.StormEagle.frameTimeCounter >= self.StormEagleSprites.array[self.StormEagle.frameIndex].maxCounterVal:
             self.StormEagle.currentState = State.stand
@@ -135,13 +139,13 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.StormProjectile[x].currentState = State.offscrean
 
                 # self.StormProjectile[x].frameTimeCounter += 1
-                if self.StormProjectile[x].frameTimeCounter > self.StormProjectileSprite[x].array[self.StormProjectile[x].frameIndex].maxCounterVal:
+                if self.StormProjectile[x].frameTimeCounter > self.StormProjectileSprite.array[self.StormProjectile[x].frameIndex].maxCounterVal:
                     self.StormProjectile[x].frameTimeCounter = 0
-                    self.StormProjectile[x].frameIndex = self.StormProjectileSprite[x].array[self.StormProjectile[x].frameIndex].next
+                    self.StormProjectile[x].frameIndex = self.StormProjectileSprite.array[self.StormProjectile[x].frameIndex].next
 
             for x in range(len(self.StormProjectile)):
                 # backgroundDrawn = self.masking(self.StormEagle, self.StormEagleSprites, backgroundDrawn)
-                background = self.masking(self.StormProjectile[x], self.StormProjectileSprite[x], background)
+                background = self.masking(self.StormProjectile[x], self.StormProjectileSprite, background)
 
             self.StormProjectile = [x for x in self.StormProjectile if x.currentState != State.offscrean]
 
@@ -152,16 +156,88 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
         tempStormProjectile.currentState = State.inscreen
         if faceDir == FaceDir.left:
             tempStormProjectile.posX = posX - 50
-            tempStormProjectile.vX = - 20
+            tempStormProjectile.vX = -20
         else:
             tempStormProjectile.posX = posX + 50
-            tempStormProjectile.vX = + 20
+            tempStormProjectile.vX = 20
         tempStormProjectile.posY = posY
         tempStormProjectile.faceDir = faceDir
-        tempStormProjectileSprite = copy.copy(SpriteObject.StormCannonProjectile)
+        # tempStormProjectileSprite = copy.copy(SpriteObject.StormCannonProjectile)
 
         self.StormProjectile.append(tempStormProjectile)
-        self.StormProjectileSprite.append(tempStormProjectileSprite)
+        # self.StormProjectileSprite.append(tempStormProjectileSprite)
+
+    def updateGustProjectile(self, background):
+        if self.GustProjectile != []:
+            for x in range(len(self.GustProjectile)):
+                self.GustProjectile[x].frameTimeCounter += 1
+
+                self.GustProjectile[x].posX += self.GustProjectile[x].vX
+
+                if self.GustProjectile[x].posX < 0:
+                    self.GustProjectile[x].currentState = State.offscrean
+
+                # self.GustProjectile[x].frameTimeCounter += 1
+                if self.GustProjectile[x].frameTimeCounter > self.GustProjectileSprite.array[self.GustProjectile[x].frameIndex].maxCounterVal:
+                    self.GustProjectile[x].frameTimeCounter = 0
+                    self.GustProjectile[x].frameIndex = self.GustProjectileSprite.array[self.GustProjectile[x].frameIndex].next
+
+            for x in range(len(self.GustProjectile)):
+                background = self.masking(self.GustProjectile[x], self.GustProjectileSprite, background)
+
+            self.GustProjectile = [x for x in self.GustProjectile if x.currentState != State.offscrean]
+
+        # if self.StormProjectile != []:
+        #     for x in range(len(self.StormProjectile)):
+        #         self.StormProjectile[x].frameTimeCounter += 1
+
+        #         self.StormProjectile[x].posX += self.StormProjectile[x].vX
+
+        #         if self.StormProjectile[x].posX < 0:
+        #             self.StormProjectile[x].currentState = State.offscrean
+
+                # self.StormProjectile[x].frameTimeCounter += 1
+            #     if self.StormProjectile[x].frameTimeCounter > self.StormProjectileSprite.array[self.StormProjectile[x].frameIndex].maxCounterVal:
+            #         self.StormProjectile[x].frameTimeCounter = 0
+            #         self.StormProjectile[x].frameIndex = self.StormProjectileSprite.array[self.StormProjectile[x].frameIndex].next
+
+            # for x in range(len(self.StormProjectile)):
+                # backgroundDrawn = self.masking(self.StormEagle, self.StormEagleSprites, backgroundDrawn)
+            #     background = self.masking(self.StormProjectile[x], self.StormProjectileSprite, background)
+
+            # self.StormProjectile = [x for x in self.StormProjectile if x.currentState != State.offscrean]
+
+        return background
+
+
+    def addGustProjectile(self, posX, posY, faceDir):
+        tempGustProjectile = copy.copy(SpriteObject.Gust)
+        tempGustProjectile.currentState = State.inscreen
+        if faceDir == FaceDir.left:
+            tempGustProjectile.posX = posX - 50
+            tempGustProjectile.vX = -20
+        else:
+            tempGustProjectile.posX = posX + 50
+            tempGustProjectile.vX = 20
+        tempGustProjectile.posY = posY
+        tempGustProjectile.faceDir = faceDir
+
+        self.GustProjectile.append(tempGustProjectile)
+
+        # tempStormProjectile = copy.copy(SpriteObject.StormCannon)
+        # tempStormProjectile.currentState = State.inscreen
+        # if faceDir == FaceDir.left:
+        #     tempStormProjectile.posX = posX - 50
+        #     tempStormProjectile.vX = -20
+        # else:
+        #     tempStormProjectile.posX = posX + 50
+        #     tempStormProjectile.vX = 20
+        # tempStormProjectile.posY = posY
+        # tempStormProjectile.faceDir = faceDir
+        # tempStormProjectileSprite = copy.copy(SpriteObject.StormCannonProjectile)
+
+        # self.StormProjectile.append(tempStormProjectile)
+        # self.StormProjectileSprite.append(tempStormProjectileSprite)
     
     def isOffscreen(self, character, frameList):
         # if character.posY < 0 or character.posY >= self.screenHeight or character.posX < 0 or character.posX >= self.screenWidth:
@@ -237,6 +313,7 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
         backgroundDrawn = self.backgroundImage.copy()
         backgroundDrawn = self.masking(self.StormEagle, self.StormEagleSprites, backgroundDrawn)
         backgroundDrawn = self.updateStormProjectile(backgroundDrawn)
+        backgroundDrawn = self.updateGustProjectile(backgroundDrawn)
         backgroundDrawn = self.masking(self.Megaman, self.MegamanSprite, backgroundDrawn)
         canvas = QtGui.QPixmap(self.screenWidth, self.screenHeight)
         painter = QtGui.QPainter(canvas)
