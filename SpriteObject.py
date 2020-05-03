@@ -127,3 +127,13 @@ StormCannonProjectile.insert(52, 45, 14, 76, 9, 95, 1, 1)
 StormCannonProjectile.insert(153, 43, 10, 76, 112, 194, 1, 2)
 StormCannonProjectile.insert(256, 47, 13, 81, 215, 297, 1, 3)
 StormCannonProjectile.insert(361, 40, 10, 69, 320, 402, 1, 0)
+
+Gust = SpriteObject("Gust", "Resource/Gust.png", FaceDir.left)
+
+GustProjectile = FrameList(Gust, 5)
+
+GustProjectile.insert(79, 21, 12, 30, 6, 152, 1, 1)
+GustProjectile.insert(237, 19, 8, 30, 181, 293, 1, 2)
+GustProjectile.insert(400, 20, 10, 30, 345, 455, 1, 3)
+GustProjectile.insert(552, 20, 9, 30, 511, 593, 1, 4)
+GustProjectile.insert(726, 16, 7, 25, 666, 786, 1, 0)
