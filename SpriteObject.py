@@ -13,6 +13,7 @@ class State(Enum):
     shootStormTornado = auto()
     stagger = auto()
     gust = auto()
+    decendingIntro = auto()
 
 class FaceDir(Enum):
     left = auto()
@@ -73,6 +74,7 @@ StormEagleStand = FrameList(StormEagle, 1)
 StormEagleGust = FrameList(StormEagle, 2)
 StormEagleShootStormCannon = FrameList(StormEagle, 2)
 StormEagleThrowEggBomb = FrameList(StormEagle, 3)
+StormEagleDive = FrameList(StormEagle, 2)
 # StormEagleStagger = FrameList(StormEagle)
 
 StormEagleFly.insert(562, 50, 25, 81, 541, 596, 1, 1)
@@ -111,3 +113,6 @@ MegamanStagger.insert(126, 26, 3, 43, 108, 143, 1, 1)
 MegamanStagger.insert(165, 23, 2, 43, 146, 181, 1, 2)
 MegamanStagger.insert(202, 22, 0, 44, 184, 216, 1, 3)
 MegamanStagger.insert(237, 22, 1, 44, 218, 257, 1, 0)
+
+StormEagleDive.insert(1024, 51, 15, 84, 997, 1053, 1, 1)
+StormEagleDive.insert(1094, 49, 8, 85, 1067, 1131, 1, 0)

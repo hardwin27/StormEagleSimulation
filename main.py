@@ -22,14 +22,14 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.StormEagle = SpriteObject.StormEagle
         self.StormEagleSprites = SpriteObject.StormEagleFly
-        self.StormEagle.currentState = State.reappear
+        self.StormEagle.currentState = State.decendingIntro
         self.StormEagle.posX = 450
         self.StormEagle.posY = 0
 
         self.Megaman = SpriteObject.Megaman
         self.Megaman.currentState = State.stand
         self.MegamanSprite = SpriteObject.MegamanStand
-        self.Megaman.posX = 250
+        self.Megaman.posX = round(self.screenWidth/2)
         self.Megaman.posY = self.platformImage.yPos - self.MegamanSprite.array[self.Megaman.frameIndex].bottom + self.MegamanSprite.array[self.Megaman.frameIndex].centerY 
 
         self.timer = QtCore.QTimer()
@@ -39,13 +39,13 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
     def updateStormEagle(self):
         self.StormEagle.frameTimeCounter += 1
 
-        if self.StormEagle.currentState == State.reappear:
+        if self.StormEagle.currentState == State.decendingIntro:
             self.StormEagle.vX = 0
             self.StormEagle.vY = 5
             self.StormEagle.posX += self.StormEagle.vX
             self.StormEagle.posY += self.StormEagle.vY
 
-        if self.StormEagle.currentState == State.reappear and self.StormEagle.posY + self.StormEagleSprites.array[self.StormEagle.frameIndex].bottom - self.StormEagleSprites.array[self.StormEagle.frameIndex].centerY > self.platformImage.top + self.platformImage.yPos:
+        if self.StormEagle.currentState == State.decendingIntro and self.StormEagle.posY + self.StormEagleSprites.array[self.StormEagle.frameIndex].bottom - self.StormEagleSprites.array[self.StormEagle.frameIndex].centerY > self.platformImage.top + self.platformImage.yPos:
             self.StormEagle.vX = 0
             self.StormEagle.vY = 0
             self.StormEagle.currentState = State.intro
@@ -78,10 +78,34 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
             self.StormEagle.frameTimeCounter = 0
             self.StormEagle.frameIndex = 0
 
+        if self.StormEagle.currentState == State.dive:
+            self.StormEagle.posX += self.StormEagle.vX
+            self.StormEagle.posY += self.StormEagle.vY 
+
         # self.StormEagle.frameTimeCounter += 1
         if self.StormEagle.frameTimeCounter > self.StormEagleSprites.array[self.StormEagle.frameIndex].maxCounterVal:
             self.StormEagle.frameTimeCounter = 0
             self.StormEagle.frameIndex = self.StormEagleSprites.array[self.StormEagle.frameIndex].next
+
+        if self.isOffscreen(self.StormEagle, self.StormEagleSprites) != "nope" and self.StormEagle.currentState != State.fly:
+            self.StormEagle.currentState = State.reappear
+            self.StormEagleSprites = SpriteObject.StormEagleFly
+            self.StormEagle.posX = 450
+            self.StormEagle.posY = 0
+
+        if self.StormEagle.currentState == State.reappear:
+            self.StormEagle.vX = 0
+            self.StormEagle.vY = 5
+            self.StormEagle.posX += self.StormEagle.vX
+            self.StormEagle.posY += self.StormEagle.vY
+
+        if self.StormEagle.currentState == State.reappear and self.StormEagle.posY + self.StormEagleSprites.array[self.StormEagle.frameIndex].bottom - self.StormEagleSprites.array[self.StormEagle.frameIndex].centerY > self.platformImage.top + self.platformImage.yPos:
+            self.StormEagle.vX = 0
+            self.StormEagle.vY = 0
+            self.StormEagle.currentState = State.stand
+            self.StormEagleSprites = SpriteObject.StormEagleStand
+            self.StormEagle.frameTimeCounter = 0
+            self.StormEagle.frameIndex = 0
             
     def updateMegaman(self):
         self.Megaman.frameTimeCounter += 1
@@ -91,6 +115,15 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
         if self.Megaman.frameTimeCounter > self.MegamanSprite.array[self.Megaman.frameIndex].maxCounterVal:
             self.Megaman.frameTimeCounter = 0
             self.Megaman.frameIndex = self.MegamanSprite.array[self.Megaman.frameIndex].next
+    
+    def isOffscreen(self, character, frameList):
+        # if character.posY < 0 or character.posY >= self.screenHeight or character.posX < 0 or character.posX >= self.screenWidth:
+        if character.posY + frameList.array[character.frameIndex].bottom - frameList.array[character.frameIndex].centerY < 0 or character.posY - frameList.array[character.frameIndex].centerX >= self.screenHeight or character.posX + frameList.array[character.frameIndex].right - frameList.array[character.frameIndex].centerX < 0 or character.posX -frameList.array[character.frameIndex].centerX >= self.screenWidth:
+            if character.posX > round(self.screenWidth/2):
+                return "right"
+            else:
+                return "left"
+        return "nope"
     
     def andOperation(self, backgroundColor, maskColor):
         red = bin(backgroundColor.red() & maskColor.red())
@@ -134,8 +167,8 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
                     y += 1
                 x += 1
         else:
-            x = 1
-            while x < frameList.array[character.frameIndex].frameWidth:
+            x = frameList.array[character.frameIndex].frameWidth - 1
+            while x >= 1:
                 i = frameList.array[character.frameIndex].frameWidth - x
                 xForBackground = x + character.posX - 1 - frameList.array[character.frameIndex].centerX
                 y = 1
@@ -148,7 +181,7 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
                         color2 = self.orOperation(background.pixelColor(xForBackground, yForBackground), frameList.array[character.frameIndex].sprite.pixelColor(i, j))
                         background.setPixelColor(xForBackground, yForBackground, color2)
                     y += 1
-                x += 1
+                x -= 1
         return background
 
     def updateScreen(self):
@@ -231,7 +264,29 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.StormEagle.frameTimeCounter = 0
                 self.StormEagle.frameIndex = 0
 
-        
+        if event.key() == QtCore.Qt.Key_Space:
+            sides = self.isOffscreen(self.StormEagle, self.StormEagleSprites)
+            if sides == "right":
+                self.StormEagle.currentState = State.dive
+                self.StormEagleSprites = SpriteObject.StormEagleDive
+                self.StormEagle.frameTimeCounter = 0
+                self.StormEagle.frameIndex = 0
+                if self.StormEagle.posX > self.screenWidth - 1:
+                    self.StormEagle.posX = self.screenWidth - 1
+                self.StormEagle.posY = 0
+                self.StormEagle.vX = -50
+                self.StormEagle.vY = 50
+                self.StormEagle.faceDir = FaceDir.left
+            elif sides == "left":
+                self.StormEagle.currentState = State.dive
+                self.StormEagleSprites = SpriteObject.StormEagleDive
+                self.StormEagle.frameTimeCounter = 0
+                self.StormEagle.frameIndex = 0
+                if self.StormEagle.posX < 0:
+                    self.StormEagle.posX = 0
+                self.StormEagle.vX = 50
+                self.StormEagle.vY = 50
+                self.StormEagle.faceDir = FaceDir.right
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
