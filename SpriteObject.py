@@ -9,13 +9,11 @@ class State(Enum):
     fly = auto()
     reappear = auto()
     dive = auto()
-    hover = auto()
     throwEggBomb =  auto()
     shootStormTornado = auto()
     stagger = auto()
     gust = auto()
     decendingIntro = auto()
-    egg = auto()
 
 class FaceDir(Enum):
     left = auto()
@@ -137,3 +135,16 @@ GustProjectile.insert(237, 19, 8, 30, 181, 293, 1, 2)
 GustProjectile.insert(400, 20, 10, 30, 345, 455, 1, 3)
 GustProjectile.insert(552, 20, 9, 30, 511, 593, 1, 4)
 GustProjectile.insert(726, 16, 7, 25, 666, 786, 1, 0)
+
+EggBomb = SpriteObject("Egg Bomb", "Resource/BirdEgg.png", FaceDir.left)
+
+EggBombEgg = FrameList(EggBomb, 1)
+
+EggBombEgg.insert(121, 12, 3, 20, 112, 129, 10, 0)
+
+EggBombLittleBird = FrameList(EggBomb, 4)
+
+EggBombLittleBird.insert(16, 11, 3, 19, 6, 26, 1, 1)
+EggBombLittleBird.insert(47, 11, 3, 19, 37, 57, 1, 2)
+EggBombLittleBird.insert(72, 11, 4, 17, 62, 82, 1, 3)
+EggBombLittleBird.insert(99, 11, 4, 18, 89, 109, 1, 0)
