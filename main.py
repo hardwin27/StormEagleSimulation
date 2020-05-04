@@ -43,7 +43,6 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
         self.EggBombProjectileSprite = SpriteObject.EggBombEgg
 
         self.gravitation = 50
-        self.test = 0
         
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.updateScreen)
@@ -65,7 +64,6 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
             self.StormEagleSprites = SpriteObject.StormEagleIntro
             self.StormEagle.frameTimeCounter = 0
             self.StormEagle.frameIndex = 0
-            # print(str(self.StormEagle.posX) + " " + str(self.StormEagle.posY))
         
         if self.StormEagle.currentState == State.intro and self.StormEagle.frameIndex == self.StormEagleSprites.amount - 1:
             self.StormEagle.currentState = State.stand
@@ -117,6 +115,19 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
             self.StormEagleSprites = SpriteObject.StormEagleStand
             self.StormEagle.frameTimeCounter = 0
             self.StormEagle.frameIndex = 0
+
+
+        if self.checkCollisionDetection(self.StormEagleSprites.array[self.StormEagle.frameIndex], self.MegamanSprite.array[self.Megaman.frameIndex], self.StormEagle, self.Megaman):
+            self.Megaman.currentState = State.stagger
+            self.MegamanSprite = SpriteObject.MegamanStagger
+            self.Megaman.frameIndex = 0
+            self.Megaman.frameTimeCounter = 0
+            if self.StormEagle.faceDir == FaceDir.left:
+                self.Megaman.vX = - 5
+                self.Megaman.faceDir = FaceDir.right
+            else:
+                self.Megaman.vX = 5
+                self.Megaman.faceDir = FaceDir.left
 
         # self.StormEagle.frameTimeCounter += 1
         if self.StormEagle.frameTimeCounter > self.StormEagleSprites.array[self.StormEagle.frameIndex].maxCounterVal:
@@ -222,7 +233,6 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
 
         return background
 
-
     def addGustProjectile(self, posX, posY, faceDir):
         tempGustProjectile = copy.copy(SpriteObject.Gust)
         tempGustProjectile.currentState = State.inscreen
@@ -284,8 +294,8 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
         tempEggBombProjectile.faceDir = faceDir
 
         self.EggBombProjectile.append(tempEggBombProjectile)
+        
     def isOffscreen(self, character, frameList):
-        # if character.posY < 0 or character.posY >= self.screenHeight or character.posX < 0 or character.posX >= self.screenWidth:
         if character.posY + frameList.array[character.frameIndex].bottom - frameList.array[character.frameIndex].centerY < 0 or character.posY - frameList.array[character.frameIndex].centerX >= self.screenHeight or character.posX + frameList.array[character.frameIndex].right - frameList.array[character.frameIndex].centerX < 0 or character.posX -frameList.array[character.frameIndex].centerX >= self.screenWidth:
             if character.posX > round(self.screenWidth/2):
                 return "right"
@@ -294,19 +304,6 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
         return "nope"
 
     def checkCollisionDetection(self, frame2, frame1, object2, object1):
-        # xForBackground = x + character.posX - 1 - frameList.array[character.frameIndex].centerX
-        # yForBackground = y + character.posY - 1 - frameList.array[character.frameIndex].centerY
-        
-        # L1 = object1.posX - frame1.centerX
-        # R1 = object1.posX + frame1.right - frame1.centerX
-        # T1 = object1.posY - frame1.centerY
-        # B1 = object1.posY + frame1.bottom - frame1.centerY
-
-        # L2 = object2.posX - frame2.centerX
-        # R2 = object2.posX + frame2.right - frame2.centerX
-        # T2 = object2.posY - frame2.centerY
-        # B2 = object2.posY + frame2.bottom - frame2.centerY
-
         L1 = frame1.left + object1.posX - 1 - frame1.centerX
         R1 = frame1.right + object1.posX - 1 - frame1.centerX
         T1 = frame1.top + object1.posY - 1 - frame1.centerY
@@ -316,35 +313,6 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
         R2 = frame2.right + object2.posX - 1 - frame2.centerX
         T2 = frame2.top + object2.posY - 1 - frame2.centerY
         B2 = frame2.bottom + object2.posY - 1 - frame2.centerY
-
-        # if L2 < R1 and B1 < T2 and L1 < R2 and B2 < T1
-        # print("object2.posX - frame2.centerX = " + str(object2.posX - frame2.centerX))
-        # print("object1.posX + frame1.right - frame1.centerX = " + str(object1.posX + frame1.right - frame1.centerX))
-        # print(object2.posX - frame2.centerX < object1.posX + frame1.right - frame1.centerX)
-        # print("\n")
-
-        # print("object1.posY + frame1.bottom - frame1.centerY = " + str(object1.posY + frame1.bottom - frame1.centerY))
-        # print("object2.posY - frame2.centerY = " + str(object2.posY - frame2.centerY))
-        # print(object1.posY + frame1.bottom - frame1.centerY < object2.posY - frame2.centerY)
-        # print("\n")
-
-        # print("object1.posX - frame1.centerX = " + str(object1.posX - frame1.centerX))
-        # print("object2.posX + frame2.right - frame2.centerX = " + str(object2.posX + frame2.right - frame2.centerX))
-        # print(object1.posX - frame1.centerX <  object2.posX + frame2.right - frame2.centerX)
-        # print("\n")
-
-        # print("object2.posY + frame2.bottom - frame2.centerY = " +str(object2.posY + frame2.bottom - frame2.centerY))
-        # print("object1.posY - frame1.centerY = " + str(object1.posY - frame1.centerY))
-        # print(object2.posY + frame2.bottom - frame2.centerY < object1.posY - frame1.centerY)
-        # print("\n")
-
-        # print("================================================================")
-
-        # if object2.posX - frame2.centerX < object1.posX + frame1.right - frame1.centerX and object1.posY + frame1.bottom - frame1.centerY < object2.posY - frame2.centerY and \
-        # object1.posX - frame1.centerX <  object2.posX + frame2.right - frame2.centerX and object2.posY + frame2.bottom - frame2.centerY < object1.posY - frame1.centerY:
-        #     return True
-
-        # return False
 
         if L2 < R1 and L1 < R2 and T1 < B2 and T2 < B1 :
             return True
