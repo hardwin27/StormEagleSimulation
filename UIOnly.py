@@ -43,7 +43,7 @@ class Ui_MainWindow(object):
         self.centralwidget.setObjectName("centralwidget")
         
         self.lbl_Movement = QtWidgets.QLabel(self.centralwidget)
-        self.lbl_Movement.setGeometry(QtCore.QRect(720, 120, 91, 16))
+        self.lbl_Movement.setGeometry(QtCore.QRect(720, 120, MainWindow.width() - 720, 16))
         font = QtGui.QFont()
         font.setFamily("8514oem")
         self.lbl_Movement.setFont(font)
@@ -51,7 +51,7 @@ class Ui_MainWindow(object):
         self.lbl_Movement.setObjectName("lbl_Movement")
         
         self.lbl_Ctrl = QtWidgets.QLabel(self.centralwidget)
-        self.lbl_Ctrl.setGeometry(QtCore.QRect(790, 70, 81, 31))
+        self.lbl_Ctrl.setGeometry(QtCore.QRect(790, 70, MainWindow.width() - 720, 31))
         font = QtGui.QFont()
         font.setPointSize(10)
         font.setBold(True)
@@ -61,7 +61,7 @@ class Ui_MainWindow(object):
         self.lbl_Ctrl.setObjectName("lbl_Ctrl")
         
         self.lbl_Gust = QtWidgets.QLabel(self.centralwidget)
-        self.lbl_Gust.setGeometry(QtCore.QRect(720, 150, 91, 16))
+        self.lbl_Gust.setGeometry(QtCore.QRect(720, 150, MainWindow.width() - 720, 16))
         font = QtGui.QFont()
         font.setFamily("8514oem")
         self.lbl_Gust.setFont(font)
@@ -69,7 +69,7 @@ class Ui_MainWindow(object):
         self.lbl_Gust.setObjectName("lbl_Gust")
         
         self.lbl_Egg = QtWidgets.QLabel(self.centralwidget)
-        self.lbl_Egg.setGeometry(QtCore.QRect(720, 180, 91, 16))
+        self.lbl_Egg.setGeometry(QtCore.QRect(720, 180, MainWindow.width() - 720, 16))
         font = QtGui.QFont()
         font.setFamily("8514oem")
         self.lbl_Egg.setFont(font)
@@ -77,7 +77,7 @@ class Ui_MainWindow(object):
         self.lbl_Egg.setObjectName("lbl_Egg")
         
         self.lbl_Reappear = QtWidgets.QLabel(self.centralwidget)
-        self.lbl_Reappear.setGeometry(QtCore.QRect(720, 210, 100, 16))
+        self.lbl_Reappear.setGeometry(QtCore.QRect(720, 210, MainWindow.width() - 720, 16))
         font = QtGui.QFont()
         font.setFamily("8514oem")
         self.lbl_Reappear.setFont(font)
@@ -85,7 +85,7 @@ class Ui_MainWindow(object):
         self.lbl_Reappear.setObjectName("lbl_Reappear")
         
         self.lbl_Dive = QtWidgets.QLabel(self.centralwidget)
-        self.lbl_Dive.setGeometry(QtCore.QRect(720, 240, 91, 16))
+        self.lbl_Dive.setGeometry(QtCore.QRect(720, 240, MainWindow.width() - 720, 16))
         font = QtGui.QFont()
         font.setFamily("8514oem")
         self.lbl_Dive.setFont(font)
@@ -93,7 +93,7 @@ class Ui_MainWindow(object):
         self.lbl_Dive.setObjectName("lbl_Dive")
         
         self.lbl_Storm = QtWidgets.QLabel(self.centralwidget)
-        self.lbl_Storm.setGeometry(QtCore.QRect(720, 270, 91, 16))
+        self.lbl_Storm.setGeometry(QtCore.QRect(720, 270, MainWindow.width() - 720, 16))
         font = QtGui.QFont()
         font.setFamily("8514oem")
         self.lbl_Storm.setFont(font)

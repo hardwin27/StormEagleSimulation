@@ -40,7 +40,7 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
         self.GustProjectileSprite = SpriteObject.GustProjectile
 
         self.EggBombProjectile = []
-        self.EggBombProjectileSprite = SpriteObject.EggBombEgg
+        self.EggBombProjectileSprite = []
 
         self.gravitation = 50
         
@@ -255,41 +255,61 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.EggBombProjectile[x].posX += self.EggBombProjectile[x].vX
                 self.EggBombProjectile[x].posY += self.EggBombProjectile[x].vY
 
-                if self.EggBombProjectile[x].vY < 10:
+                if self.EggBombProjectile[x].vY < 10 and self.EggBombProjectile[x].currentState == State.egg:
                     self.EggBombProjectile[x].vY += self.gravitation
 
                 if self.EggBombProjectile[x].posX < 0 or self.EggBombProjectile[x].posX >= self.screenWidth or self.EggBombProjectile[x].posY < 0 or self.EggBombProjectile[x].posY >= self.screenHeight:
                     self.EggBombProjectile[x].currentState = State.offscrean
 
-                if self.checkCollisionDetection(self.EggBombProjectileSprite.array[self.EggBombProjectile[x].frameIndex], self.MegamanSprite.array[self.Megaman.frameIndex], self.EggBombProjectile[x], self.Megaman):
+                if self.checkCollisionDetection(self.EggBombProjectileSprite[x].array[self.EggBombProjectile[x].frameIndex], self.MegamanSprite.array[self.Megaman.frameIndex], self.EggBombProjectile[x], self.Megaman):
+                    self.Megaman.currentState = State.stagger
+                    self.MegamanSprite = SpriteObject.MegamanStagger
+                    self.Megaman.frameIndex = 0
+                    self.Megaman.frameTimeCounter = 0
+                    if self.EggBombProjectile[x].faceDir == FaceDir.left:
+                        self.Megaman.vX = - 1
+                        self.Megaman.faceDir = FaceDir.right
+                    else:
+                        self.Megaman.vX = 1
+                        self.Megaman.faceDir = FaceDir.left
                     if self.EggBombProjectile[x].currentState == State.egg:
-                        self.Megaman.currentState = State.stagger
-                        self.MegamanSprite = SpriteObject.MegamanStagger
-                        self.Megaman.frameIndex = 0
-                        self.Megaman.frameTimeCounter = 0
-                        if self.EggBombProjectile[x].faceDir == FaceDir.left:
-                            self.Megaman.vX = - 1
-                            self.Megaman.faceDir = FaceDir.right
-                        else:
-                            self.Megaman.vX = 1
-                            self.Megaman.faceDir = FaceDir.left
                         self.EggBombProjectile[x].currentState = State.offscrean
                 
-                # self.EggBombProjectile[x].frameTimeCounter += 1
-                if self.EggBombProjectile[x].frameTimeCounter > self.EggBombProjectileSprite.array[self.EggBombProjectile[x].frameIndex].maxCounterVal:
+                if self.EggBombProjectile[x].currentState == State.egg and self.EggBombProjectile[x].posY + self.EggBombProjectileSprite[x].array[self.EggBombProjectile[x].frameIndex].bottom - self.EggBombProjectileSprite[x].array[self.EggBombProjectile[x].frameIndex].centerY > self.platformImage.top + self.platformImage.yPos:
+                    self.EggBombProjectile[x].currentState = State.littleBird                                                                                   
+                    self.EggBombProjectileSprite[x] = SpriteObject.EggBombLittleBird
                     self.EggBombProjectile[x].frameTimeCounter = 0
-                    self.EggBombProjectile[x].frameIndex = self.EggBombProjectileSprite.array[self.EggBombProjectile[x].frameIndex].next
+                    self.EggBombProjectile[x].frameIndex = 0
+                    if self.EggBombProjectile[x].posX > self.Megaman.posX:
+                        self.EggBombProjectile[x].vX = -20
+                        self.EggBombProjectile[x].faceDir = FaceDir.left
+                    else:
+                        self.EggBombProjectile[x].vX = 20
+                        self.EggBombProjectile[x].faceDir = FaceDir.right
+                    self.EggBombProjectile[x].vY = 0
+                    self.EggBombProjectile[x].posY = self.platformImage.top + self.platformImage.yPos - 10
+
+                # self.EggBombProjectile[x].frameTimeCounter += 1
+                if self.EggBombProjectile[x].frameTimeCounter > self.EggBombProjectileSprite[x].array[self.EggBombProjectile[x].frameIndex].maxCounterVal:
+                    self.EggBombProjectile[x].frameTimeCounter = 0
+                    self.EggBombProjectile[x].frameIndex = self.EggBombProjectileSprite[x].array[self.EggBombProjectile[x].frameIndex].next
 
             for x in range(len(self.EggBombProjectile)):
-                background = self.masking(self.EggBombProjectile[x], self.EggBombProjectileSprite, background)
+                background = self.masking(self.EggBombProjectile[x], self.EggBombProjectileSprite[x], background)
+
+            for x in range(len((self.EggBombProjectile))):
+                if self.EggBombProjectile[x].currentState == State.offscrean:
+                    temp = self.EggBombProjectileSprite.pop(x)
+                    del(temp)
 
             self.EggBombProjectile = [x for x in self.EggBombProjectile if x.currentState != State.offscrean]
 
         return background
 
     def addEggBombProjectile(self, posX, posY, faceDir):
-        tempEggBombProjectile = copy.copy(SpriteObject.Gust)
+        tempEggBombProjectile = copy.copy(SpriteObject.EggBomb)
         tempEggBombProjectile.currentState = State.egg
+        tempEggBombProjectileSprite = copy.copy(SpriteObject.EggBombEgg)
 
         tempEggBombProjectile.posX = posX
         tempEggBombProjectile.posY = posY
@@ -304,6 +324,7 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
         tempEggBombProjectile.faceDir = faceDir
 
         self.EggBombProjectile.append(tempEggBombProjectile)
+        self.EggBombProjectileSprite.append(tempEggBombProjectileSprite)
         
     def isOffscreen(self, character, frameList):
         if character.posY + frameList.array[character.frameIndex].bottom - frameList.array[character.frameIndex].centerY < 0 or character.posY - frameList.array[character.frameIndex].centerX >= self.screenHeight or character.posX + frameList.array[character.frameIndex].right - frameList.array[character.frameIndex].centerX < 0 or character.posX -frameList.array[character.frameIndex].centerX >= self.screenWidth:
