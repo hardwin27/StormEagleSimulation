@@ -99,6 +99,8 @@ StormEagleThrowEggBomb.insert(1167, 60, 2, 93, 1146, 1208, 1, 1)
 StormEagleThrowEggBomb.insert(1242, 59, 0, 92, 1218, 1282, 1, 2)
 StormEagleThrowEggBomb.insert(1320, 48, 18, 81, 1291, 1361, 1, 0)
 
+StormEagleDive.insert(1024, 51, 15, 84, 997, 1053, 1, 1)
+StormEagleDive.insert(1094, 49, 8, 85, 1067, 1131, 1, 0)
 
 Megaman = SpriteObject("Megaman", "Resource/MegamanSprite", FaceDir.right)
 
@@ -113,9 +115,6 @@ MegamanStagger.insert(126, 26, 3, 43, 108, 143, 1, 1)
 MegamanStagger.insert(165, 23, 2, 43, 146, 181, 1, 2)
 MegamanStagger.insert(202, 22, 0, 44, 184, 216, 1, 3)
 MegamanStagger.insert(237, 22, 1, 44, 218, 257, 1, 0)
-
-StormEagleDive.insert(1024, 51, 15, 84, 997, 1053, 1, 1)
-StormEagleDive.insert(1094, 49, 8, 85, 1067, 1131, 1, 0)
 
 StormCannon = SpriteObject("Storm Cannon Projectile", "Resource/Storm.png", FaceDir.left)
 
