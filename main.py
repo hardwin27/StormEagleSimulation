@@ -55,6 +55,16 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
     def updateStormEagle(self):
         self.StormEagle.frameTimeCounter += 1
 
+        if self.StormEagle.currentState == State.falling:
+            self.StormEagle.posY += self.StormEagle.vY
+            if self.StormEagle.posY - 20 > self.screenHeight:
+                self.StormEagle.currentState = State.reappear
+                self.StormEagleSprites = SpriteObject.StormEagleFly
+                self.StormEagle.frameIndex = 0
+                self.StormEagle.frameTimeCounter = 0
+                self.StormEagle.posX = 450
+                self.StormEagle.posY = 0
+
         if self.StormEagle.currentState == State.decendingIntro:
             self.StormEagle.vX = 0
             self.StormEagle.vY = 5
@@ -495,26 +505,34 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.StormEagle.posX += self.StormEagle.vX
                 self.StormEagle.posY += self.StormEagle.vY
                 if self.StormEagle.posY + self.StormEagleSprites.array[self.StormEagle.frameIndex].bottom - self.StormEagleSprites.array[self.StormEagle.frameIndex].centerY > self.platformImage.top + self.platformImage.yPos:
-                    self.StormEagle.vX = 0
-                    self.StormEagle.vY = 0
-                    self.StormEagle.currentState = State.stand
-                    self.StormEagleSprites = SpriteObject.StormEagleStand
-                    self.StormEagle.frameTimeCounter = 0
-                    self.StormEagle.frameIndex = 0
+                    if self.StormEagle.posX > self.platformImage.xPos and self.StormEagle.posX <= self.platformImage.xPos + self.platformImage.right:
+                        self.StormEagle.vX = 0
+                        self.StormEagle.vY = 0
+                        self.StormEagle.currentState = State.stand
+                        self.StormEagleSprites = SpriteObject.StormEagleStand
+                        self.StormEagle.frameTimeCounter = 0
+                        self.StormEagle.frameIndex = 0
+                    else:
+                        if self.StormEagle.posY > self.platformImage.top + self.platformImage.yPos:
+                            self.StormEagle.currentState = State.falling
+                            self.StormEagle.vX = 0
+                            self.StormEagle.vY = 10
 
         if event.key() == QtCore.Qt.Key_Left:
             if self.StormEagle.currentState == State.fly:
-                self.StormEagle.vX = -5
-                self.StormEagle.vY = 0
-                self.StormEagle.posX += self.StormEagle.vX
-                self.StormEagle.posY += self.StormEagle.vY
+                if self.StormEagle.posY + self.StormEagleSprites.array[self.StormEagle.frameIndex].bottom - self.StormEagleSprites.array[self.StormEagle.frameIndex].centerY <= self.platformImage.top + self.platformImage.yPos:        
+                    self.StormEagle.vX = -5
+                    self.StormEagle.vY = 0
+                    self.StormEagle.posX += self.StormEagle.vX
+                    self.StormEagle.posY += self.StormEagle.vY
 
         if event.key() == QtCore.Qt.Key_Right:
             if self.StormEagle.currentState == State.fly:
-                self.StormEagle.vX = 5
-                self.StormEagle.vY = 0
-                self.StormEagle.posX += self.StormEagle.vX
-                self.StormEagle.posY += self.StormEagle.vY
+                if self.StormEagle.posY + self.StormEagleSprites.array[self.StormEagle.frameIndex].bottom - self.StormEagleSprites.array[self.StormEagle.frameIndex].centerY <= self.platformImage.top + self.platformImage.yPos:
+                    self.StormEagle.vX = 5
+                    self.StormEagle.vY = 0
+                    self.StormEagle.posX += self.StormEagle.vX
+                    self.StormEagle.posY += self.StormEagle.vY
 
         if event.key() == QtCore.Qt.Key_C:
             if self.StormEagle.currentState == State.fly:
