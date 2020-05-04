@@ -125,8 +125,15 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
             
     def updateMegaman(self):
         self.Megaman.frameTimeCounter += 1
+        if self.Megaman.currentState == State.stagger and self.Megaman.frameIndex == self.MegamanSprite.amount - 1:
+            self.Megaman.currentState = State.stand
+            self.MegamanSprite = SpriteObject.MegamanStand
+            self.Megaman.frameIndex = 0
+            self.Megaman.frameTimeCounter = 0
+            self.Megaman.vX = 0
 
-
+        self.Megaman.posX += self.Megaman.vX
+        self.Megaman.posY += self.Megaman.vY
         
         if self.Megaman.frameTimeCounter > self.MegamanSprite.array[self.Megaman.frameIndex].maxCounterVal:
             self.Megaman.frameTimeCounter = 0
@@ -139,9 +146,17 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
 
                 self.StormProjectile[x].posX += self.StormProjectile[x].vX
                 
-                if self.checkCollisionDetection(self.StormProjectileSprite.array[self.StormProjectile[x].frameIndex], self.MegamanSprite.array[self.Megaman.frameIndex], self.StormProjectile[x], self.Megaman):
-                    print(self.test)
-                    self.test += 1
+                if self.checkCollisionDetection(self.StormProjectileSprite.array[self.StormProjectile[x].frameIndex], self.MegamanSprite.array[self.Megaman.frameIndex], self.StormProjectile[x], self.Megaman) and self.Megaman.currentState == State.stand:
+                    self.Megaman.currentState = State.stagger
+                    self.MegamanSprite = SpriteObject.MegamanStagger
+                    self.Megaman.frameIndex = 0
+                    self.Megaman.frameTimeCounter = 0
+                    if self.StormProjectile[x].faceDir == FaceDir.left:
+                        self.Megaman.vX = - 1
+                        self.Megaman.faceDir = FaceDir.right
+                    else:
+                        self.Megaman.vX = 1
+                        self.Megaman.faceDir = FaceDir.left
 
                 if self.StormProjectile[x].posX < 0 or self.StormProjectile[x].posX >= self.screenWidth:
                     self.StormProjectile[x].currentState = State.offscrean
