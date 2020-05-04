@@ -219,10 +219,16 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
 
                 self.EggBombProjectile[x].posX += self.EggBombProjectile[x].vX
                 self.EggBombProjectile[x].posY += self.EggBombProjectile[x].vY
-                self.EggBombProjectile[x].vY += self.gravitation
+
+                if self.EggBombProjectile[x].vY < 10:
+                    self.EggBombProjectile[x].vY += self.gravitation
 
                 if self.EggBombProjectile[x].posX < 0 or self.EggBombProjectile[x].posX >= self.screenWidth or self.EggBombProjectile[x].posY < 0 or self.EggBombProjectile[x].posY >= self.screenHeight:
                     self.EggBombProjectile[x].currentState = State.offscrean
+
+                if self.checkCollisionDetection(self.EggBombProjectileSprite.array[self.EggBombProjectile[x].frameIndex], self.MegamanSprite.array[self.Megaman.frameIndex], self.EggBombProjectile[x], self.Megaman):
+                    print(self.test)
+                    self.test += 1
                 
                 # self.EggBombProjectile[x].frameTimeCounter += 1
                 if self.EggBombProjectile[x].frameTimeCounter > self.EggBombProjectileSprite.array[self.EggBombProjectile[x].frameIndex].maxCounterVal:
@@ -245,11 +251,11 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
         if faceDir == FaceDir.left:
             tempEggBombProjectile.posX = posX - 5
             tempEggBombProjectile.vX = -5
-            tempEggBombProjectile.vY = -15
+            tempEggBombProjectile.vY = -20
         else:
             tempEggBombProjectile.posX = posX + 5
             tempEggBombProjectile.vX = 5
-            tempEggBombProjectile.vY = -15
+            tempEggBombProjectile.vY = -20
         tempEggBombProjectile.faceDir = faceDir
 
         self.EggBombProjectile.append(tempEggBombProjectile)
@@ -315,7 +321,7 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # return False
 
-        if L2 < R1 and L1 < R2 or B1 < T2 and B2 < T1 :
+        if L2 < R1 and L1 < R2 and T1 < B2 and T2 < B1 :
             return True
         else:
             return False
