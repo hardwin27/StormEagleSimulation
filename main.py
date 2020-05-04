@@ -6,6 +6,7 @@ from SpriteObject import State, FaceDir
 from Platform import Platform
 import sys
 import copy
+import random
 
 class Control(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None):
@@ -32,6 +33,7 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
         self.MegamanSprite = SpriteObject.MegamanStand
         self.Megaman.posX = round(self.screenWidth/2)
         self.Megaman.posY = self.platformImage.yPos - self.MegamanSprite.array[self.Megaman.frameIndex].bottom + self.MegamanSprite.array[self.Megaman.frameIndex].centerY 
+        self.megamanCollisionIsOn = True
 
         self.StormProjectile = []
         self.StormProjectileSprite = SpriteObject.StormCannonProjectile
@@ -43,6 +45,8 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
         self.EggBombProjectileSprite = []
 
         self.gravitation = 50
+
+        self.counterForRespawn = 0
         
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.updateScreen)
@@ -136,16 +140,43 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
             
     def updateMegaman(self):
         self.Megaman.frameTimeCounter += 1
-        if self.Megaman.currentState == State.stagger and self.Megaman.frameIndex == self.MegamanSprite.amount - 1:
-            self.Megaman.currentState = State.stand
-            self.MegamanSprite = SpriteObject.MegamanStand
-            self.Megaman.frameIndex = 0
-            self.Megaman.frameTimeCounter = 0
-            self.Megaman.vX = 0
+        if self.Megaman.posX > self.platformImage.xPos  and self.Megaman.posX <= self.platformImage.xPos + self.platformImage.right:          
+            if self.Megaman.currentState == State.stagger and self.Megaman.frameIndex == self.MegamanSprite.amount - 1:
+                self.Megaman.currentState = State.stand
+                self.MegamanSprite = SpriteObject.MegamanStand
+                self.Megaman.frameIndex = 0
+                self.Megaman.frameTimeCounter = 0
+                self.Megaman.vX = 0
+           
+        else:
+            if self.Megaman.currentState != State.offscrean:
+                self.Megaman.currentState = State.falling
+                self.MegamanSprite = SpriteObject.MegamanStagger
+                self.Megaman.frameIndex = 0
+                self.Megaman.frameTimeCounter = 0
+                self.Megaman.vX = 0
+                self.Megaman.vY = 10
+
+        if self.Megaman.posY - 20 > self.screenHeight:
+            if self.Megaman.currentState == State.falling:
+                self.counterForRespawn = 0
+                self.Megaman.currentState = State.offscrean
+            self.Megaman.vY = 0
+            self.counterForRespawn += 1
+            if self.counterForRespawn >= 30:
+                self.Megaman.currentState = State.stand
+                self.MegamanSprite = SpriteObject.MegamanStand
+                self.Megaman.frameIndex = 0
+                self.Megaman.frameTimeCounter = 0
+                randomLocation = random.randint(self.platformImage.xPos + self.platformImage.left + 5, self.platformImage.xPos + self.platformImage.right - 5)
+                while randomLocation > self.StormEagle.posX - 20 and randomLocation < self.StormEagle.posX + 20:
+                    randomLocation = random.randint(self.platformImage.xPos + self.platformImage.left + 5, self.platformImage.xPos + self.platformImage.right - 5)
+                self.Megaman.posX = randomLocation
+                self.Megaman.posY = self.platformImage.yPos - self.MegamanSprite.array[self.Megaman.frameIndex].bottom + self.MegamanSprite.array[self.Megaman.frameIndex].centerY 
 
         self.Megaman.posX += self.Megaman.vX
         self.Megaman.posY += self.Megaman.vY
-        
+
         if self.Megaman.frameTimeCounter > self.MegamanSprite.array[self.Megaman.frameIndex].maxCounterVal:
             self.Megaman.frameTimeCounter = 0
             self.Megaman.frameIndex = self.MegamanSprite.array[self.Megaman.frameIndex].next
@@ -163,10 +194,10 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.Megaman.frameIndex = 0
                     self.Megaman.frameTimeCounter = 0
                     if self.StormProjectile[x].faceDir == FaceDir.left:
-                        self.Megaman.vX = - 1
+                        self.Megaman.vX = -5
                         self.Megaman.faceDir = FaceDir.right
                     else:
-                        self.Megaman.vX = 1
+                        self.Megaman.vX = 5
                         self.Megaman.faceDir = FaceDir.left
 
                 if self.StormProjectile[x].posX < 0 or self.StormProjectile[x].posX >= self.screenWidth:

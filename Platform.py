@@ -6,6 +6,6 @@ class Platform():
         self.xPos = x
         self.yPos = y
         self.top = 1 - 1
-        self.bottom = 96
+        self.bottom = 96 -1
         self.left = 0
         self.right = 357

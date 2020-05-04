@@ -16,6 +16,7 @@ class State(Enum):
     decendingIntro = auto()
     egg = auto()
     littleBird = auto()
+    falling = auto()
 
 class FaceDir(Enum):
     left = auto()
