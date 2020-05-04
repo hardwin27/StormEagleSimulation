@@ -262,8 +262,18 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.EggBombProjectile[x].currentState = State.offscrean
 
                 if self.checkCollisionDetection(self.EggBombProjectileSprite.array[self.EggBombProjectile[x].frameIndex], self.MegamanSprite.array[self.Megaman.frameIndex], self.EggBombProjectile[x], self.Megaman):
-                    print(self.test)
-                    self.test += 1
+                    if self.EggBombProjectile[x].currentState == State.egg:
+                        self.Megaman.currentState = State.stagger
+                        self.MegamanSprite = SpriteObject.MegamanStagger
+                        self.Megaman.frameIndex = 0
+                        self.Megaman.frameTimeCounter = 0
+                        if self.EggBombProjectile[x].faceDir == FaceDir.left:
+                            self.Megaman.vX = - 1
+                            self.Megaman.faceDir = FaceDir.right
+                        else:
+                            self.Megaman.vX = 1
+                            self.Megaman.faceDir = FaceDir.left
+                        self.EggBombProjectile[x].currentState = State.offscrean
                 
                 # self.EggBombProjectile[x].frameTimeCounter += 1
                 if self.EggBombProjectile[x].frameTimeCounter > self.EggBombProjectileSprite.array[self.EggBombProjectile[x].frameIndex].maxCounterVal:
@@ -279,7 +289,7 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def addEggBombProjectile(self, posX, posY, faceDir):
         tempEggBombProjectile = copy.copy(SpriteObject.Gust)
-        tempEggBombProjectile.currentState = State.inscreen
+        tempEggBombProjectile.currentState = State.egg
 
         tempEggBombProjectile.posX = posX
         tempEggBombProjectile.posY = posY

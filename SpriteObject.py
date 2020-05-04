@@ -14,6 +14,8 @@ class State(Enum):
     stagger = auto()
     gust = auto()
     decendingIntro = auto()
+    egg = auto()
+    littleBird = auto()
 
 class FaceDir(Enum):
     left = auto()
