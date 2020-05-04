@@ -85,7 +85,7 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
             self.StormEagleSprites = SpriteObject.StormEagleStand
             self.StormEagle.frameTimeCounter = 0
             self.StormEagle.frameIndex = 0
-            self.addGustProjectile(self.StormEagle.posX, self.StormEagle.posY, self.StormEagle.faceDir)
+            self.addGustProjectile(self.StormEagle.posX, self.StormEagle.posY + self.StormEagleSprites.array[self.StormEagle.frameIndex].bottom - self.StormEagleSprites.array[self.StormEagle.frameIndex].centerY - 5, self.StormEagle.faceDir)
 
         if self.StormEagle.currentState == State.shootStormTornado and self.StormEagle.frameIndex == self.StormEagleSprites.amount - 1 and self.StormEagle.frameTimeCounter >= self.StormEagleSprites.array[self.StormEagle.frameIndex].maxCounterVal:
             self.StormEagle.currentState = State.stand
@@ -197,6 +197,16 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
 
                 self.GustProjectile[x].posX += self.GustProjectile[x].vX
 
+                if self.checkCollisionDetection(self.GustProjectileSprite.array[self.GustProjectile[x].frameIndex], self.MegamanSprite.array[self.Megaman.frameIndex], self.GustProjectile[x], self.Megaman):
+                    if self.GustProjectile[x].faceDir == FaceDir.left:
+                        self.Megaman.faceDir = FaceDir.right
+                        self.Megaman.vX = -5
+                    else:
+                        self.Megaman.faceDir = FaceDir.left
+                        self.Megaman.vX = 5
+                else:
+                    self.Megaman.vX = 0
+
                 if self.GustProjectile[x].posX < 0:
                     self.GustProjectile[x].currentState = State.offscrean
 
@@ -218,10 +228,10 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
         tempGustProjectile.currentState = State.inscreen
         if faceDir == FaceDir.left:
             tempGustProjectile.posX = posX - 50
-            tempGustProjectile.vX = -20
+            tempGustProjectile.vX = -30
         else:
             tempGustProjectile.posX = posX + 50
-            tempGustProjectile.vX = 20
+            tempGustProjectile.vX = 30
         tempGustProjectile.posY = posY
         tempGustProjectile.faceDir = faceDir
 
