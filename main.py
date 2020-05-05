@@ -136,7 +136,7 @@ class Control(QtWidgets.QMainWindow, Ui_MainWindow):
             self.MegamanSprite = SpriteObject.MegamanStagger
             self.Megaman.frameIndex = 0
             self.Megaman.frameTimeCounter = 0
-            if self.StormEagle.faceDir == FaceDir.left:
+            if self.StormEagle.posX > self.Megaman.posX:
                 self.Megaman.vX = - 5
                 self.Megaman.faceDir = FaceDir.right
             else:
